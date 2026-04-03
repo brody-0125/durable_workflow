@@ -1,0 +1,27 @@
+name: durable_workflow_drift
+description: >-
+  Drift ORM implementation of CheckpointStore for durable_workflow.
+  Provides type-safe, reactive persistence with code-generated queries.
+version: 0.1.0
+repository: https://github.com/brody-0125/durable_workflow/tree/main/durable_workflow_drift
+issue_tracker: https://github.com/brody-0125/durable_workflow/issues
+topics:
+  - workflow
+  - drift
+  - persistence
+  - orm
+
+environment:
+  sdk: ^3.4.0
+
+dependencies:
+  durable_workflow: ^0.1.0
+  drift: ^2.22.0
+  sqlite3: ^2.4.0
+  sqlite3_flutter_libs: ^0.5.0
+
+dev_dependencies:
+  build_runner: ^2.4.0
+  drift_dev: ^2.22.0
+  lints: ^4.0.0
+  test: ^1.25.0

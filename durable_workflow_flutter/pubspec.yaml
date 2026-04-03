@@ -1,0 +1,27 @@
+name: durable_workflow_flutter
+description: >-
+  Flutter platform adapters for durable_workflow.
+  Provides lifecycle-aware recovery, background scheduling,
+  and monitoring widgets for durable workflow executions.
+version: 0.1.0
+repository: https://github.com/brody-0125/durable_workflow/tree/main/durable_workflow_flutter
+issue_tracker: https://github.com/brody-0125/durable_workflow/issues
+topics:
+  - workflow
+  - flutter
+  - lifecycle
+  - background
+
+environment:
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  durable_workflow: ^0.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  durable_workflow_sqlite: ^0.1.0

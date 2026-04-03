@@ -1,0 +1,15 @@
+name: durable_workflow_examples
+description: >
+  Use-case catalog for durable_workflow library.
+  Demonstrates real-world durable workflow patterns across 7 categories.
+version: 0.1.0
+publish_to: none
+repository: https://github.com/brody-0125/durable_workflow/tree/main/durable_workflow_examples
+issue_tracker: https://github.com/brody-0125/durable_workflow/issues
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  durable_workflow:
+    path: ../durable_workflow

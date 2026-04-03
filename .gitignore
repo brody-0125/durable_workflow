@@ -1,0 +1,28 @@
+# Dart
+.dart_tool/
+.packages
+build/
+pubspec.lock
+doc/api/
+*.g.dart
+
+# Coverage
+coverage/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# macOS
+.DS_Store
+
+# Claude Code
+CLAUDE.md
+
+# Local skill outputs
+교정_내역_리포트.md
+publish.sh
+
+# Gran Maestro
+.gran-maestro/
