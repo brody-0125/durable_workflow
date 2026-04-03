@@ -1,8 +1,6 @@
 @Tags(['integration'])
 library;
 
-import 'dart:async';
-
 import 'package:durable_workflow/durable_workflow.dart';
 import 'package:durable_workflow_sqlite/durable_workflow_sqlite.dart';
 import 'package:test/test.dart';
@@ -86,7 +84,7 @@ void main() {
       expect(exec!.status, isA<Completed>());
     });
 
-    test('waitSignal timeout throws TimeoutException',
+    test('waitSignal timeout throws WorkflowTimeoutException',
         () async {
       expect(
         () => engine.run<void>(
@@ -98,7 +96,7 @@ void main() {
             );
           },
         ),
-        throwsA(isA<TimeoutException>()),
+        throwsA(isA<WorkflowTimeoutException>()),
       );
     });
   });

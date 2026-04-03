@@ -4,7 +4,7 @@ import '../model/execution_status.dart';
 import '../model/workflow_signal.dart';
 import '../persistence/checkpoint_store.dart';
 import '../util/clock.dart';
-import 'step_executor.dart';
+import 'types.dart';
 
 /// Manages durable signals for workflow waitSignal operations.
 ///
@@ -112,10 +112,10 @@ class SignalManager {
           _completers.remove(key);
           _timeoutTimers.remove(key);
           completer.completeError(
-            TimeoutException(
-              'Signal "$signalName" timed out for execution '
-              '$workflowExecutionId',
-              timeout,
+            WorkflowTimeoutException(
+              workflowExecutionId: workflowExecutionId,
+              signalName: signalName,
+              timeout: timeout,
             ),
           );
         }

@@ -156,10 +156,11 @@ void main() {
         expect(execution!.status, isA<Cancelled>());
       });
 
-      test('throws StateError on unknown execution', () async {
+      test('throws WorkflowExecutionNotFoundException on unknown execution',
+          () async {
         await expectLater(
           engine.cancel('nonexistent'),
-          throwsStateError,
+          throwsA(isA<WorkflowExecutionNotFoundException>()),
         );
       });
 

@@ -13,6 +13,7 @@ import 'saga_compensator.dart';
 import 'signal_manager.dart';
 import 'step_executor.dart';
 import 'timer_manager.dart';
+import 'types.dart';
 
 /// Concrete implementation of [DurableEngine].
 ///
@@ -125,7 +126,7 @@ class DurableEngineImpl implements DurableEngine {
   ) async {
     var execution = await _store.loadExecution(workflowExecutionId);
     if (execution == null) {
-      throw StateError('Execution $workflowExecutionId not found');
+      throw WorkflowExecutionNotFoundException(workflowExecutionId);
     }
 
     execution = execution.copyWith(
@@ -229,7 +230,7 @@ class DurableEngineImpl implements DurableEngine {
 
     final execution = await _store.loadExecution(workflowExecutionId);
     if (execution == null) {
-      throw StateError('Execution $workflowExecutionId not found');
+      throw WorkflowExecutionNotFoundException(workflowExecutionId);
     }
 
     final updated = execution.copyWith(
