@@ -14,6 +14,7 @@ import 'signal_manager.dart';
 import 'step_executor.dart';
 import 'timer_manager.dart';
 import 'types.dart';
+import '../util/validation.dart';
 
 /// Concrete implementation of [DurableEngine].
 ///
@@ -89,6 +90,7 @@ class DurableEngineImpl implements DurableEngine {
     Duration? ttl,
     WorkflowGuarantee guarantee = WorkflowGuarantee.foregroundOnly,
   }) async {
+    validateIdentifier(workflowType, 'workflowType');
     final executionId = _generateId();
     final now = utcNow();
 
@@ -273,6 +275,8 @@ class DurableEngineImpl implements DurableEngine {
     String signalName, [
     Object? payload,
   ]) async {
+    validateIdentifier(workflowExecutionId, 'workflowExecutionId');
+    validateIdentifier(signalName, 'signalName');
     final signal = WorkflowSignal(
       workflowExecutionId: workflowExecutionId,
       signalName: signalName,

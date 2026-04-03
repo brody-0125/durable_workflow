@@ -2,6 +2,7 @@ import '../engine/signal_manager.dart';
 import '../engine/step_executor.dart';
 import '../engine/timer_manager.dart';
 import '../model/retry_policy.dart';
+import '../util/validation.dart';
 import 'workflow_context.dart';
 
 /// Concrete implementation of [WorkflowContext].
@@ -44,6 +45,7 @@ class WorkflowContextImpl implements WorkflowContext {
     String Function(T value)? serialize,
     T Function(String data)? deserialize,
   }) {
+    validateIdentifier(name, 'name');
     return _executor.executeStep<T>(
       name,
       action,
@@ -56,6 +58,7 @@ class WorkflowContextImpl implements WorkflowContext {
 
   @override
   Future<void> sleep(String name, Duration duration) {
+    validateIdentifier(name, 'name');
     return _timerManager.registerTimer(
       workflowExecutionId: _workflowExecutionId,
       stepName: name,
@@ -68,6 +71,7 @@ class WorkflowContextImpl implements WorkflowContext {
     String signalName, {
     Duration? timeout,
   }) async {
+    validateIdentifier(signalName, 'signalName');
     final result = await _signalManager.waitForSignal(
       workflowExecutionId: _workflowExecutionId,
       signalName: signalName,
