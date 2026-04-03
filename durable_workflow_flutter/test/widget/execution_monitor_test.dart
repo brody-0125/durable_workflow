@@ -57,7 +57,7 @@ void main() {
       await tester.pumpWidget(buildApp(
         child: ExecutionMonitor(
           workflowExecutionId: 'exec-2',
-          builder: (_, exec) => Text('Status: Completed'),
+          builder: (_, exec) => const Text('Status: Completed'),
         ),
       ));
       await tester.pump();

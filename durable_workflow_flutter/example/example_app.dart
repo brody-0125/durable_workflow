@@ -15,7 +15,7 @@ Future<String> orderWorkflow(WorkflowContext ctx) async {
     'charge_payment',
     () async => 'payment-txn-456',
     compensate: (_) async => print('Refunding payment...'),
-    retry: const RetryPolicyExponential(),
+    retry: const RetryPolicyExponential(maxAttempts: 3),
   );
 
   await ctx.sleep('await_shipping', const Duration(hours: 24));
@@ -46,16 +46,16 @@ class _ExampleAppState extends State<ExampleApp> {
   Widget build(BuildContext context) {
     return DurableWorkflowProvider(
       store: _store,
-      workflowRegistry: {
+      workflowRegistry: const {
         'order_processing': orderWorkflow,
       },
       // backgroundAdapter: WorkManagerAdapter(),  // Android
       // backgroundAdapter: BgTaskAdapter(),       // iOS
       onResumed: () => print('App resumed — recovery scan triggered'),
       onPaused: () => print('App paused — background recovery scheduled'),
-      child: MaterialApp(
+      child: const MaterialApp(
         title: 'Durable Workflow Demo',
-        home: const OrderDashboard(),
+        home: OrderDashboard(),
       ),
     );
   }
@@ -125,17 +125,15 @@ class _OrderDashboardState extends State<OrderDashboard> {
             orderWorkflow,
             ttl: const Duration(days: 30),
           ).then((result) {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Workflow completed: $result')),
-              );
-            }
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Workflow completed: $result')),
+            );
           }).catchError((Object error) {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Workflow failed: $error')),
-              );
-            }
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Workflow failed: $error')),
+            );
           });
         },
         child: const Icon(Icons.play_arrow),

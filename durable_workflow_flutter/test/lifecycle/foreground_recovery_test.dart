@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:durable_workflow/durable_workflow.dart';
 import 'package:durable_workflow/testing.dart';
 import 'package:durable_workflow_flutter/durable_workflow_flutter.dart';
@@ -16,7 +14,7 @@ void main() {
     engine = DurableEngineImpl(store: store);
     registry = {
       'test_workflow': (ctx) async {
-        await ctx.step('step1', () => 'result');
+        await ctx.step('step1', () async => 'result');
         return 'done';
       },
     };
