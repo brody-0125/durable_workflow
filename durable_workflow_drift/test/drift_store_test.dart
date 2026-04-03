@@ -1,7 +1,6 @@
 @Tags(['integration'])
 library;
 
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:durable_workflow/durable_workflow.dart';
 import 'package:test/test.dart';

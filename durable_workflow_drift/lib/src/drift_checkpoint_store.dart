@@ -1,8 +1,14 @@
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide JsonKey;
 import 'package:durable_workflow/durable_workflow.dart';
 
-import 'database.dart';
-import 'tables.dart';
+// Hide Drift-generated DataClasses that conflict with durable_workflow models.
+import 'database.dart'
+    hide
+        Workflow,
+        WorkflowExecution,
+        StepCheckpoint,
+        WorkflowTimer,
+        WorkflowSignal;
 
 /// Drift ORM-backed implementation of [CheckpointStore].
 ///

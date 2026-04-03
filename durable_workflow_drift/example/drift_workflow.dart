@@ -36,8 +36,8 @@ Future<void> main() async {
             print('  [pay] Charging payment...');
             return 'PAY-001';
           },
-          compensate: () async {
-            print('  [pay:compensate] Refunding...');
+          compensate: (result) async {
+            print('  [pay:compensate] Refunding $result...');
           },
         );
 

@@ -4,7 +4,6 @@
 build/
 pubspec.lock
 doc/api/
-*.g.dart
 
 # Coverage
 coverage/
