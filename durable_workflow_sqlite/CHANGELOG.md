@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Widen sqlite3 constraint to `>=2.9.4 <4.0.0` for sqlite3 3.x compatibility.
+
 ## 0.1.1
 
 - Tighten dependency constraints (sqlite3 ^2.9.4, meta ^1.18.2) for pub.dev scoring.

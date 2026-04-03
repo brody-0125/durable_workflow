@@ -2,7 +2,7 @@ name: durable_workflow_sqlite
 description: >-
   SQLite implementation of CheckpointStore for durable_workflow.
   Uses sqlite3 FFI for high-performance local persistence.
-version: 0.1.1
+version: 0.1.2
 repository: https://github.com/brody-0125/durable_workflow/tree/main/durable_workflow_sqlite
 issue_tracker: https://github.com/brody-0125/durable_workflow/issues
 topics:
@@ -17,7 +17,7 @@ environment:
 dependencies:
   durable_workflow: ^0.1.0
   meta: ^1.18.2
-  sqlite3: ^2.9.4
+  sqlite3: ">=2.9.4 <4.0.0"
 
 dev_dependencies:
   lints: ^4.0.0
