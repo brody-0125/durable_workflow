@@ -300,10 +300,7 @@ class $WorkflowExecutionsTable extends WorkflowExecutions
   @override
   late final GeneratedColumn<String> workflowId = GeneratedColumn<String>(
       'workflow_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES workflows (workflow_id)'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumn<String> status = GeneratedColumn<String>(
@@ -889,10 +886,7 @@ class $StepCheckpointsTable extends StepCheckpoints
   @override
   late final GeneratedColumn<String> workflowExecutionId =
       GeneratedColumn<String>('workflow_execution_id', aliasedName, false,
-          type: DriftSqlType.string,
-          requiredDuringInsert: true,
-          defaultConstraints: GeneratedColumn.constraintIsAlways(
-              'REFERENCES workflow_executions (workflow_execution_id)'));
+          type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _stepIndexMeta =
       const VerificationMeta('stepIndex');
   @override
@@ -1548,10 +1542,7 @@ class $WorkflowTimersTable extends WorkflowTimers
   @override
   late final GeneratedColumn<String> workflowExecutionId =
       GeneratedColumn<String>('workflow_execution_id', aliasedName, false,
-          type: DriftSqlType.string,
-          requiredDuringInsert: true,
-          defaultConstraints: GeneratedColumn.constraintIsAlways(
-              'REFERENCES workflow_executions (workflow_execution_id)'));
+          type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _stepNameMeta =
       const VerificationMeta('stepName');
   @override
@@ -1919,10 +1910,7 @@ class $WorkflowSignalsTable extends WorkflowSignals
   @override
   late final GeneratedColumn<String> workflowExecutionId =
       GeneratedColumn<String>('workflow_execution_id', aliasedName, false,
-          type: DriftSqlType.string,
-          requiredDuringInsert: true,
-          defaultConstraints: GeneratedColumn.constraintIsAlways(
-              'REFERENCES workflow_executions (workflow_execution_id)'));
+          type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _signalNameMeta =
       const VerificationMeta('signalName');
   @override
@@ -2300,29 +2288,6 @@ typedef $$WorkflowsTableUpdateCompanionBuilder = WorkflowsCompanion Function({
   Value<int> rowid,
 });
 
-final class $$WorkflowsTableReferences extends BaseReferences<
-    _$DurableWorkflowDatabase, $WorkflowsTable, Workflow> {
-  $$WorkflowsTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<$WorkflowExecutionsTable, List<WorkflowExecution>>
-      _workflowExecutionsRefsTable(_$DurableWorkflowDatabase db) =>
-          MultiTypedResultKey.fromTable(db.workflowExecutions,
-              aliasName: $_aliasNameGenerator(
-                  db.workflows.workflowId, db.workflowExecutions.workflowId));
-
-  $$WorkflowExecutionsTableProcessedTableManager get workflowExecutionsRefs {
-    final manager =
-        $$WorkflowExecutionsTableTableManager($_db, $_db.workflowExecutions)
-            .filter((f) => f.workflowId.workflowId
-                .sqlEquals($_itemColumn<String>('workflow_id')!));
-
-    final cache =
-        $_typedResult.readTableOrNull(_workflowExecutionsRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
-  }
-}
-
 class $$WorkflowsTableFilterComposer
     extends Composer<_$DurableWorkflowDatabase, $WorkflowsTable> {
   $$WorkflowsTableFilterComposer({
@@ -2343,27 +2308,6 @@ class $$WorkflowsTableFilterComposer
 
   ColumnFilters<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
-
-  Expression<bool> workflowExecutionsRefs(
-      Expression<bool> Function($$WorkflowExecutionsTableFilterComposer f) f) {
-    final $$WorkflowExecutionsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowId,
-        referencedTable: $db.workflowExecutions,
-        getReferencedColumn: (t) => t.workflowId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowExecutionsTableFilterComposer(
-              $db: $db,
-              $table: $db.workflowExecutions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
 }
 
 class $$WorkflowsTableOrderingComposer
@@ -2409,28 +2353,6 @@ class $$WorkflowsTableAnnotationComposer
 
   GeneratedColumn<String> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  Expression<T> workflowExecutionsRefs<T extends Object>(
-      Expression<T> Function($$WorkflowExecutionsTableAnnotationComposer a) f) {
-    final $$WorkflowExecutionsTableAnnotationComposer composer =
-        $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.workflowId,
-            referencedTable: $db.workflowExecutions,
-            getReferencedColumn: (t) => t.workflowId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$WorkflowExecutionsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.workflowExecutions,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
-    return f(composer);
-  }
 }
 
 class $$WorkflowsTableTableManager extends RootTableManager<
@@ -2442,9 +2364,12 @@ class $$WorkflowsTableTableManager extends RootTableManager<
     $$WorkflowsTableAnnotationComposer,
     $$WorkflowsTableCreateCompanionBuilder,
     $$WorkflowsTableUpdateCompanionBuilder,
-    (Workflow, $$WorkflowsTableReferences),
+    (
+      Workflow,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowsTable, Workflow>
+    ),
     Workflow,
-    PrefetchHooks Function({bool workflowExecutionsRefs})> {
+    PrefetchHooks Function()> {
   $$WorkflowsTableTableManager(
       _$DurableWorkflowDatabase db, $WorkflowsTable table)
       : super(TableManagerState(
@@ -2485,37 +2410,9 @@ class $$WorkflowsTableTableManager extends RootTableManager<
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$WorkflowsTableReferences(db, table, e)
-                  ))
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({workflowExecutionsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (workflowExecutionsRefs) db.workflowExecutions
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (workflowExecutionsRefs)
-                    await $_getPrefetchedData<Workflow, $WorkflowsTable,
-                            WorkflowExecution>(
-                        currentTable: table,
-                        referencedTable: $$WorkflowsTableReferences
-                            ._workflowExecutionsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$WorkflowsTableReferences(db, table, p0)
-                                .workflowExecutionsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.workflowId == item.workflowId),
-                        typedResults: items)
-                ];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ));
 }
 
@@ -2528,9 +2425,12 @@ typedef $$WorkflowsTableProcessedTableManager = ProcessedTableManager<
     $$WorkflowsTableAnnotationComposer,
     $$WorkflowsTableCreateCompanionBuilder,
     $$WorkflowsTableUpdateCompanionBuilder,
-    (Workflow, $$WorkflowsTableReferences),
+    (
+      Workflow,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowsTable, Workflow>
+    ),
     Workflow,
-    PrefetchHooks Function({bool workflowExecutionsRefs})>;
+    PrefetchHooks Function()>;
 typedef $$WorkflowExecutionsTableCreateCompanionBuilder
     = WorkflowExecutionsCompanion Function({
   required String workflowExecutionId,
@@ -2562,82 +2462,6 @@ typedef $$WorkflowExecutionsTableUpdateCompanionBuilder
   Value<int> rowid,
 });
 
-final class $$WorkflowExecutionsTableReferences extends BaseReferences<
-    _$DurableWorkflowDatabase, $WorkflowExecutionsTable, WorkflowExecution> {
-  $$WorkflowExecutionsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
-
-  static $WorkflowsTable _workflowIdTable(_$DurableWorkflowDatabase db) =>
-      db.workflows.createAlias($_aliasNameGenerator(
-          db.workflowExecutions.workflowId, db.workflows.workflowId));
-
-  $$WorkflowsTableProcessedTableManager get workflowId {
-    final $_column = $_itemColumn<String>('workflow_id')!;
-
-    final manager = $$WorkflowsTableTableManager($_db, $_db.workflows)
-        .filter((f) => f.workflowId.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_workflowIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-
-  static MultiTypedResultKey<$StepCheckpointsTable, List<StepCheckpoint>>
-      _stepCheckpointsRefsTable(_$DurableWorkflowDatabase db) =>
-          MultiTypedResultKey.fromTable(db.stepCheckpoints,
-              aliasName: $_aliasNameGenerator(
-                  db.workflowExecutions.workflowExecutionId,
-                  db.stepCheckpoints.workflowExecutionId));
-
-  $$StepCheckpointsTableProcessedTableManager get stepCheckpointsRefs {
-    final manager =
-        $$StepCheckpointsTableTableManager($_db, $_db.stepCheckpoints).filter(
-            (f) => f.workflowExecutionId.workflowExecutionId
-                .sqlEquals($_itemColumn<String>('workflow_execution_id')!));
-
-    final cache =
-        $_typedResult.readTableOrNull(_stepCheckpointsRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
-  }
-
-  static MultiTypedResultKey<$WorkflowTimersTable, List<WorkflowTimer>>
-      _workflowTimersRefsTable(_$DurableWorkflowDatabase db) =>
-          MultiTypedResultKey.fromTable(db.workflowTimers,
-              aliasName: $_aliasNameGenerator(
-                  db.workflowExecutions.workflowExecutionId,
-                  db.workflowTimers.workflowExecutionId));
-
-  $$WorkflowTimersTableProcessedTableManager get workflowTimersRefs {
-    final manager = $$WorkflowTimersTableTableManager($_db, $_db.workflowTimers)
-        .filter((f) => f.workflowExecutionId.workflowExecutionId
-            .sqlEquals($_itemColumn<String>('workflow_execution_id')!));
-
-    final cache = $_typedResult.readTableOrNull(_workflowTimersRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
-  }
-
-  static MultiTypedResultKey<$WorkflowSignalsTable, List<WorkflowSignal>>
-      _workflowSignalsRefsTable(_$DurableWorkflowDatabase db) =>
-          MultiTypedResultKey.fromTable(db.workflowSignals,
-              aliasName: $_aliasNameGenerator(
-                  db.workflowExecutions.workflowExecutionId,
-                  db.workflowSignals.workflowExecutionId));
-
-  $$WorkflowSignalsTableProcessedTableManager get workflowSignalsRefs {
-    final manager =
-        $$WorkflowSignalsTableTableManager($_db, $_db.workflowSignals).filter(
-            (f) => f.workflowExecutionId.workflowExecutionId
-                .sqlEquals($_itemColumn<String>('workflow_execution_id')!));
-
-    final cache =
-        $_typedResult.readTableOrNull(_workflowSignalsRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
-  }
-}
-
 class $$WorkflowExecutionsTableFilterComposer
     extends Composer<_$DurableWorkflowDatabase, $WorkflowExecutionsTable> {
   $$WorkflowExecutionsTableFilterComposer({
@@ -2650,6 +2474,9 @@ class $$WorkflowExecutionsTableFilterComposer
   ColumnFilters<String> get workflowExecutionId => $composableBuilder(
       column: $table.workflowExecutionId,
       builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get workflowId => $composableBuilder(
+      column: $table.workflowId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get status => $composableBuilder(
       column: $table.status, builder: (column) => ColumnFilters(column));
@@ -2677,89 +2504,6 @@ class $$WorkflowExecutionsTableFilterComposer
 
   ColumnFilters<String> get updatedAt => $composableBuilder(
       column: $table.updatedAt, builder: (column) => ColumnFilters(column));
-
-  $$WorkflowsTableFilterComposer get workflowId {
-    final $$WorkflowsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowId,
-        referencedTable: $db.workflows,
-        getReferencedColumn: (t) => t.workflowId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowsTableFilterComposer(
-              $db: $db,
-              $table: $db.workflows,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-
-  Expression<bool> stepCheckpointsRefs(
-      Expression<bool> Function($$StepCheckpointsTableFilterComposer f) f) {
-    final $$StepCheckpointsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.stepCheckpoints,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$StepCheckpointsTableFilterComposer(
-              $db: $db,
-              $table: $db.stepCheckpoints,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-
-  Expression<bool> workflowTimersRefs(
-      Expression<bool> Function($$WorkflowTimersTableFilterComposer f) f) {
-    final $$WorkflowTimersTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowTimers,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowTimersTableFilterComposer(
-              $db: $db,
-              $table: $db.workflowTimers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-
-  Expression<bool> workflowSignalsRefs(
-      Expression<bool> Function($$WorkflowSignalsTableFilterComposer f) f) {
-    final $$WorkflowSignalsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowSignals,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowSignalsTableFilterComposer(
-              $db: $db,
-              $table: $db.workflowSignals,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
 }
 
 class $$WorkflowExecutionsTableOrderingComposer
@@ -2774,6 +2518,9 @@ class $$WorkflowExecutionsTableOrderingComposer
   ColumnOrderings<String> get workflowExecutionId => $composableBuilder(
       column: $table.workflowExecutionId,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get workflowId => $composableBuilder(
+      column: $table.workflowId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get status => $composableBuilder(
       column: $table.status, builder: (column) => ColumnOrderings(column));
@@ -2803,26 +2550,6 @@ class $$WorkflowExecutionsTableOrderingComposer
 
   ColumnOrderings<String> get updatedAt => $composableBuilder(
       column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
-
-  $$WorkflowsTableOrderingComposer get workflowId {
-    final $$WorkflowsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowId,
-        referencedTable: $db.workflows,
-        getReferencedColumn: (t) => t.workflowId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowsTableOrderingComposer(
-              $db: $db,
-              $table: $db.workflows,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
 }
 
 class $$WorkflowExecutionsTableAnnotationComposer
@@ -2836,6 +2563,9 @@ class $$WorkflowExecutionsTableAnnotationComposer
   });
   GeneratedColumn<String> get workflowExecutionId => $composableBuilder(
       column: $table.workflowExecutionId, builder: (column) => column);
+
+  GeneratedColumn<String> get workflowId => $composableBuilder(
+      column: $table.workflowId, builder: (column) => column);
 
   GeneratedColumn<String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
@@ -2863,89 +2593,6 @@ class $$WorkflowExecutionsTableAnnotationComposer
 
   GeneratedColumn<String> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  $$WorkflowsTableAnnotationComposer get workflowId {
-    final $$WorkflowsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowId,
-        referencedTable: $db.workflows,
-        getReferencedColumn: (t) => t.workflowId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.workflows,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-
-  Expression<T> stepCheckpointsRefs<T extends Object>(
-      Expression<T> Function($$StepCheckpointsTableAnnotationComposer a) f) {
-    final $$StepCheckpointsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.stepCheckpoints,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$StepCheckpointsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.stepCheckpoints,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-
-  Expression<T> workflowTimersRefs<T extends Object>(
-      Expression<T> Function($$WorkflowTimersTableAnnotationComposer a) f) {
-    final $$WorkflowTimersTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowTimers,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowTimersTableAnnotationComposer(
-              $db: $db,
-              $table: $db.workflowTimers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-
-  Expression<T> workflowSignalsRefs<T extends Object>(
-      Expression<T> Function($$WorkflowSignalsTableAnnotationComposer a) f) {
-    final $$WorkflowSignalsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowSignals,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowSignalsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.workflowSignals,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
 }
 
 class $$WorkflowExecutionsTableTableManager extends RootTableManager<
@@ -2957,13 +2604,13 @@ class $$WorkflowExecutionsTableTableManager extends RootTableManager<
     $$WorkflowExecutionsTableAnnotationComposer,
     $$WorkflowExecutionsTableCreateCompanionBuilder,
     $$WorkflowExecutionsTableUpdateCompanionBuilder,
-    (WorkflowExecution, $$WorkflowExecutionsTableReferences),
+    (
+      WorkflowExecution,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowExecutionsTable,
+          WorkflowExecution>
+    ),
     WorkflowExecution,
-    PrefetchHooks Function(
-        {bool workflowId,
-        bool stepCheckpointsRefs,
-        bool workflowTimersRefs,
-        bool workflowSignalsRefs})> {
+    PrefetchHooks Function()> {
   $$WorkflowExecutionsTableTableManager(
       _$DurableWorkflowDatabase db, $WorkflowExecutionsTable table)
       : super(TableManagerState(
@@ -3033,101 +2680,9 @@ class $$WorkflowExecutionsTableTableManager extends RootTableManager<
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$WorkflowExecutionsTableReferences(db, table, e)
-                  ))
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: (
-              {workflowId = false,
-              stepCheckpointsRefs = false,
-              workflowTimersRefs = false,
-              workflowSignalsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (stepCheckpointsRefs) db.stepCheckpoints,
-                if (workflowTimersRefs) db.workflowTimers,
-                if (workflowSignalsRefs) db.workflowSignals
-              ],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (workflowId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.workflowId,
-                    referencedTable: $$WorkflowExecutionsTableReferences
-                        ._workflowIdTable(db),
-                    referencedColumn: $$WorkflowExecutionsTableReferences
-                        ._workflowIdTable(db)
-                        .workflowId,
-                  ) as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (stepCheckpointsRefs)
-                    await $_getPrefetchedData<WorkflowExecution,
-                            $WorkflowExecutionsTable, StepCheckpoint>(
-                        currentTable: table,
-                        referencedTable: $$WorkflowExecutionsTableReferences
-                            ._stepCheckpointsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$WorkflowExecutionsTableReferences(db, table, p0)
-                                .stepCheckpointsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems.where(
-                                (e) =>
-                                    e.workflowExecutionId ==
-                                    item.workflowExecutionId),
-                        typedResults: items),
-                  if (workflowTimersRefs)
-                    await $_getPrefetchedData<WorkflowExecution,
-                            $WorkflowExecutionsTable, WorkflowTimer>(
-                        currentTable: table,
-                        referencedTable: $$WorkflowExecutionsTableReferences
-                            ._workflowTimersRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$WorkflowExecutionsTableReferences(db, table, p0)
-                                .workflowTimersRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems.where(
-                                (e) =>
-                                    e.workflowExecutionId ==
-                                    item.workflowExecutionId),
-                        typedResults: items),
-                  if (workflowSignalsRefs)
-                    await $_getPrefetchedData<WorkflowExecution,
-                            $WorkflowExecutionsTable, WorkflowSignal>(
-                        currentTable: table,
-                        referencedTable: $$WorkflowExecutionsTableReferences
-                            ._workflowSignalsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$WorkflowExecutionsTableReferences(db, table, p0)
-                                .workflowSignalsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems.where(
-                                (e) =>
-                                    e.workflowExecutionId ==
-                                    item.workflowExecutionId),
-                        typedResults: items)
-                ];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ));
 }
 
@@ -3140,13 +2695,13 @@ typedef $$WorkflowExecutionsTableProcessedTableManager = ProcessedTableManager<
     $$WorkflowExecutionsTableAnnotationComposer,
     $$WorkflowExecutionsTableCreateCompanionBuilder,
     $$WorkflowExecutionsTableUpdateCompanionBuilder,
-    (WorkflowExecution, $$WorkflowExecutionsTableReferences),
+    (
+      WorkflowExecution,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowExecutionsTable,
+          WorkflowExecution>
+    ),
     WorkflowExecution,
-    PrefetchHooks Function(
-        {bool workflowId,
-        bool stepCheckpointsRefs,
-        bool workflowTimersRefs,
-        bool workflowSignalsRefs})>;
+    PrefetchHooks Function()>;
 typedef $$StepCheckpointsTableCreateCompanionBuilder = StepCheckpointsCompanion
     Function({
   Value<int> id,
@@ -3180,30 +2735,6 @@ typedef $$StepCheckpointsTableUpdateCompanionBuilder = StepCheckpointsCompanion
   Value<String?> completedAt,
 });
 
-final class $$StepCheckpointsTableReferences extends BaseReferences<
-    _$DurableWorkflowDatabase, $StepCheckpointsTable, StepCheckpoint> {
-  $$StepCheckpointsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
-
-  static $WorkflowExecutionsTable _workflowExecutionIdTable(
-          _$DurableWorkflowDatabase db) =>
-      db.workflowExecutions.createAlias($_aliasNameGenerator(
-          db.stepCheckpoints.workflowExecutionId,
-          db.workflowExecutions.workflowExecutionId));
-
-  $$WorkflowExecutionsTableProcessedTableManager get workflowExecutionId {
-    final $_column = $_itemColumn<String>('workflow_execution_id')!;
-
-    final manager =
-        $$WorkflowExecutionsTableTableManager($_db, $_db.workflowExecutions)
-            .filter((f) => f.workflowExecutionId.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_workflowExecutionIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-}
-
 class $$StepCheckpointsTableFilterComposer
     extends Composer<_$DurableWorkflowDatabase, $StepCheckpointsTable> {
   $$StepCheckpointsTableFilterComposer({
@@ -3215,6 +2746,10 @@ class $$StepCheckpointsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get stepIndex => $composableBuilder(
       column: $table.stepIndex, builder: (column) => ColumnFilters(column));
@@ -3249,26 +2784,6 @@ class $$StepCheckpointsTableFilterComposer
 
   ColumnFilters<String> get completedAt => $composableBuilder(
       column: $table.completedAt, builder: (column) => ColumnFilters(column));
-
-  $$WorkflowExecutionsTableFilterComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowExecutions,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowExecutionsTableFilterComposer(
-              $db: $db,
-              $table: $db.workflowExecutions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
 }
 
 class $$StepCheckpointsTableOrderingComposer
@@ -3282,6 +2797,10 @@ class $$StepCheckpointsTableOrderingComposer
   });
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get stepIndex => $composableBuilder(
       column: $table.stepIndex, builder: (column) => ColumnOrderings(column));
@@ -3318,26 +2837,6 @@ class $$StepCheckpointsTableOrderingComposer
 
   ColumnOrderings<String> get completedAt => $composableBuilder(
       column: $table.completedAt, builder: (column) => ColumnOrderings(column));
-
-  $$WorkflowExecutionsTableOrderingComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowExecutions,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowExecutionsTableOrderingComposer(
-              $db: $db,
-              $table: $db.workflowExecutions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
 }
 
 class $$StepCheckpointsTableAnnotationComposer
@@ -3351,6 +2850,9 @@ class $$StepCheckpointsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId, builder: (column) => column);
 
   GeneratedColumn<int> get stepIndex =>
       $composableBuilder(column: $table.stepIndex, builder: (column) => column);
@@ -3384,27 +2886,6 @@ class $$StepCheckpointsTableAnnotationComposer
 
   GeneratedColumn<String> get completedAt => $composableBuilder(
       column: $table.completedAt, builder: (column) => column);
-
-  $$WorkflowExecutionsTableAnnotationComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableAnnotationComposer composer =
-        $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.workflowExecutionId,
-            referencedTable: $db.workflowExecutions,
-            getReferencedColumn: (t) => t.workflowExecutionId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$WorkflowExecutionsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.workflowExecutions,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
-    return composer;
-  }
 }
 
 class $$StepCheckpointsTableTableManager extends RootTableManager<
@@ -3416,9 +2897,13 @@ class $$StepCheckpointsTableTableManager extends RootTableManager<
     $$StepCheckpointsTableAnnotationComposer,
     $$StepCheckpointsTableCreateCompanionBuilder,
     $$StepCheckpointsTableUpdateCompanionBuilder,
-    (StepCheckpoint, $$StepCheckpointsTableReferences),
+    (
+      StepCheckpoint,
+      BaseReferences<_$DurableWorkflowDatabase, $StepCheckpointsTable,
+          StepCheckpoint>
+    ),
     StepCheckpoint,
-    PrefetchHooks Function({bool workflowExecutionId})> {
+    PrefetchHooks Function()> {
   $$StepCheckpointsTableTableManager(
       _$DurableWorkflowDatabase db, $StepCheckpointsTable table)
       : super(TableManagerState(
@@ -3491,47 +2976,9 @@ class $$StepCheckpointsTableTableManager extends RootTableManager<
             completedAt: completedAt,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$StepCheckpointsTableReferences(db, table, e)
-                  ))
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({workflowExecutionId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (workflowExecutionId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.workflowExecutionId,
-                    referencedTable: $$StepCheckpointsTableReferences
-                        ._workflowExecutionIdTable(db),
-                    referencedColumn: $$StepCheckpointsTableReferences
-                        ._workflowExecutionIdTable(db)
-                        .workflowExecutionId,
-                  ) as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ));
 }
 
@@ -3544,9 +2991,13 @@ typedef $$StepCheckpointsTableProcessedTableManager = ProcessedTableManager<
     $$StepCheckpointsTableAnnotationComposer,
     $$StepCheckpointsTableCreateCompanionBuilder,
     $$StepCheckpointsTableUpdateCompanionBuilder,
-    (StepCheckpoint, $$StepCheckpointsTableReferences),
+    (
+      StepCheckpoint,
+      BaseReferences<_$DurableWorkflowDatabase, $StepCheckpointsTable,
+          StepCheckpoint>
+    ),
     StepCheckpoint,
-    PrefetchHooks Function({bool workflowExecutionId})>;
+    PrefetchHooks Function()>;
 typedef $$WorkflowTimersTableCreateCompanionBuilder = WorkflowTimersCompanion
     Function({
   required String workflowTimerId,
@@ -3568,30 +3019,6 @@ typedef $$WorkflowTimersTableUpdateCompanionBuilder = WorkflowTimersCompanion
   Value<int> rowid,
 });
 
-final class $$WorkflowTimersTableReferences extends BaseReferences<
-    _$DurableWorkflowDatabase, $WorkflowTimersTable, WorkflowTimer> {
-  $$WorkflowTimersTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
-
-  static $WorkflowExecutionsTable _workflowExecutionIdTable(
-          _$DurableWorkflowDatabase db) =>
-      db.workflowExecutions.createAlias($_aliasNameGenerator(
-          db.workflowTimers.workflowExecutionId,
-          db.workflowExecutions.workflowExecutionId));
-
-  $$WorkflowExecutionsTableProcessedTableManager get workflowExecutionId {
-    final $_column = $_itemColumn<String>('workflow_execution_id')!;
-
-    final manager =
-        $$WorkflowExecutionsTableTableManager($_db, $_db.workflowExecutions)
-            .filter((f) => f.workflowExecutionId.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_workflowExecutionIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-}
-
 class $$WorkflowTimersTableFilterComposer
     extends Composer<_$DurableWorkflowDatabase, $WorkflowTimersTable> {
   $$WorkflowTimersTableFilterComposer({
@@ -3605,6 +3032,10 @@ class $$WorkflowTimersTableFilterComposer
       column: $table.workflowTimerId,
       builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId,
+      builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get stepName => $composableBuilder(
       column: $table.stepName, builder: (column) => ColumnFilters(column));
 
@@ -3616,26 +3047,6 @@ class $$WorkflowTimersTableFilterComposer
 
   ColumnFilters<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
-
-  $$WorkflowExecutionsTableFilterComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowExecutions,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowExecutionsTableFilterComposer(
-              $db: $db,
-              $table: $db.workflowExecutions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
 }
 
 class $$WorkflowTimersTableOrderingComposer
@@ -3651,6 +3062,10 @@ class $$WorkflowTimersTableOrderingComposer
       column: $table.workflowTimerId,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get stepName => $composableBuilder(
       column: $table.stepName, builder: (column) => ColumnOrderings(column));
 
@@ -3662,26 +3077,6 @@ class $$WorkflowTimersTableOrderingComposer
 
   ColumnOrderings<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
-
-  $$WorkflowExecutionsTableOrderingComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowExecutions,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowExecutionsTableOrderingComposer(
-              $db: $db,
-              $table: $db.workflowExecutions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
 }
 
 class $$WorkflowTimersTableAnnotationComposer
@@ -3696,6 +3091,9 @@ class $$WorkflowTimersTableAnnotationComposer
   GeneratedColumn<String> get workflowTimerId => $composableBuilder(
       column: $table.workflowTimerId, builder: (column) => column);
 
+  GeneratedColumn<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId, builder: (column) => column);
+
   GeneratedColumn<String> get stepName =>
       $composableBuilder(column: $table.stepName, builder: (column) => column);
 
@@ -3707,27 +3105,6 @@ class $$WorkflowTimersTableAnnotationComposer
 
   GeneratedColumn<String> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  $$WorkflowExecutionsTableAnnotationComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableAnnotationComposer composer =
-        $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.workflowExecutionId,
-            referencedTable: $db.workflowExecutions,
-            getReferencedColumn: (t) => t.workflowExecutionId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$WorkflowExecutionsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.workflowExecutions,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
-    return composer;
-  }
 }
 
 class $$WorkflowTimersTableTableManager extends RootTableManager<
@@ -3739,9 +3116,13 @@ class $$WorkflowTimersTableTableManager extends RootTableManager<
     $$WorkflowTimersTableAnnotationComposer,
     $$WorkflowTimersTableCreateCompanionBuilder,
     $$WorkflowTimersTableUpdateCompanionBuilder,
-    (WorkflowTimer, $$WorkflowTimersTableReferences),
+    (
+      WorkflowTimer,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowTimersTable,
+          WorkflowTimer>
+    ),
     WorkflowTimer,
-    PrefetchHooks Function({bool workflowExecutionId})> {
+    PrefetchHooks Function()> {
   $$WorkflowTimersTableTableManager(
       _$DurableWorkflowDatabase db, $WorkflowTimersTable table)
       : super(TableManagerState(
@@ -3790,47 +3171,9 @@ class $$WorkflowTimersTableTableManager extends RootTableManager<
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$WorkflowTimersTableReferences(db, table, e)
-                  ))
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({workflowExecutionId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (workflowExecutionId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.workflowExecutionId,
-                    referencedTable: $$WorkflowTimersTableReferences
-                        ._workflowExecutionIdTable(db),
-                    referencedColumn: $$WorkflowTimersTableReferences
-                        ._workflowExecutionIdTable(db)
-                        .workflowExecutionId,
-                  ) as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ));
 }
 
@@ -3843,9 +3186,13 @@ typedef $$WorkflowTimersTableProcessedTableManager = ProcessedTableManager<
     $$WorkflowTimersTableAnnotationComposer,
     $$WorkflowTimersTableCreateCompanionBuilder,
     $$WorkflowTimersTableUpdateCompanionBuilder,
-    (WorkflowTimer, $$WorkflowTimersTableReferences),
+    (
+      WorkflowTimer,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowTimersTable,
+          WorkflowTimer>
+    ),
     WorkflowTimer,
-    PrefetchHooks Function({bool workflowExecutionId})>;
+    PrefetchHooks Function()>;
 typedef $$WorkflowSignalsTableCreateCompanionBuilder = WorkflowSignalsCompanion
     Function({
   Value<int> workflowSignalId,
@@ -3865,30 +3212,6 @@ typedef $$WorkflowSignalsTableUpdateCompanionBuilder = WorkflowSignalsCompanion
   Value<String> createdAt,
 });
 
-final class $$WorkflowSignalsTableReferences extends BaseReferences<
-    _$DurableWorkflowDatabase, $WorkflowSignalsTable, WorkflowSignal> {
-  $$WorkflowSignalsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
-
-  static $WorkflowExecutionsTable _workflowExecutionIdTable(
-          _$DurableWorkflowDatabase db) =>
-      db.workflowExecutions.createAlias($_aliasNameGenerator(
-          db.workflowSignals.workflowExecutionId,
-          db.workflowExecutions.workflowExecutionId));
-
-  $$WorkflowExecutionsTableProcessedTableManager get workflowExecutionId {
-    final $_column = $_itemColumn<String>('workflow_execution_id')!;
-
-    final manager =
-        $$WorkflowExecutionsTableTableManager($_db, $_db.workflowExecutions)
-            .filter((f) => f.workflowExecutionId.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_workflowExecutionIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-}
-
 class $$WorkflowSignalsTableFilterComposer
     extends Composer<_$DurableWorkflowDatabase, $WorkflowSignalsTable> {
   $$WorkflowSignalsTableFilterComposer({
@@ -3902,6 +3225,10 @@ class $$WorkflowSignalsTableFilterComposer
       column: $table.workflowSignalId,
       builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId,
+      builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get signalName => $composableBuilder(
       column: $table.signalName, builder: (column) => ColumnFilters(column));
 
@@ -3913,26 +3240,6 @@ class $$WorkflowSignalsTableFilterComposer
 
   ColumnFilters<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
-
-  $$WorkflowExecutionsTableFilterComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowExecutions,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowExecutionsTableFilterComposer(
-              $db: $db,
-              $table: $db.workflowExecutions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
 }
 
 class $$WorkflowSignalsTableOrderingComposer
@@ -3948,6 +3255,10 @@ class $$WorkflowSignalsTableOrderingComposer
       column: $table.workflowSignalId,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get signalName => $composableBuilder(
       column: $table.signalName, builder: (column) => ColumnOrderings(column));
 
@@ -3959,26 +3270,6 @@ class $$WorkflowSignalsTableOrderingComposer
 
   ColumnOrderings<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
-
-  $$WorkflowExecutionsTableOrderingComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.workflowExecutionId,
-        referencedTable: $db.workflowExecutions,
-        getReferencedColumn: (t) => t.workflowExecutionId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$WorkflowExecutionsTableOrderingComposer(
-              $db: $db,
-              $table: $db.workflowExecutions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
 }
 
 class $$WorkflowSignalsTableAnnotationComposer
@@ -3993,6 +3284,9 @@ class $$WorkflowSignalsTableAnnotationComposer
   GeneratedColumn<int> get workflowSignalId => $composableBuilder(
       column: $table.workflowSignalId, builder: (column) => column);
 
+  GeneratedColumn<String> get workflowExecutionId => $composableBuilder(
+      column: $table.workflowExecutionId, builder: (column) => column);
+
   GeneratedColumn<String> get signalName => $composableBuilder(
       column: $table.signalName, builder: (column) => column);
 
@@ -4004,27 +3298,6 @@ class $$WorkflowSignalsTableAnnotationComposer
 
   GeneratedColumn<String> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  $$WorkflowExecutionsTableAnnotationComposer get workflowExecutionId {
-    final $$WorkflowExecutionsTableAnnotationComposer composer =
-        $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.workflowExecutionId,
-            referencedTable: $db.workflowExecutions,
-            getReferencedColumn: (t) => t.workflowExecutionId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$WorkflowExecutionsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.workflowExecutions,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
-    return composer;
-  }
 }
 
 class $$WorkflowSignalsTableTableManager extends RootTableManager<
@@ -4036,9 +3309,13 @@ class $$WorkflowSignalsTableTableManager extends RootTableManager<
     $$WorkflowSignalsTableAnnotationComposer,
     $$WorkflowSignalsTableCreateCompanionBuilder,
     $$WorkflowSignalsTableUpdateCompanionBuilder,
-    (WorkflowSignal, $$WorkflowSignalsTableReferences),
+    (
+      WorkflowSignal,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowSignalsTable,
+          WorkflowSignal>
+    ),
     WorkflowSignal,
-    PrefetchHooks Function({bool workflowExecutionId})> {
+    PrefetchHooks Function()> {
   $$WorkflowSignalsTableTableManager(
       _$DurableWorkflowDatabase db, $WorkflowSignalsTable table)
       : super(TableManagerState(
@@ -4083,47 +3360,9 @@ class $$WorkflowSignalsTableTableManager extends RootTableManager<
             createdAt: createdAt,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$WorkflowSignalsTableReferences(db, table, e)
-                  ))
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({workflowExecutionId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (workflowExecutionId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.workflowExecutionId,
-                    referencedTable: $$WorkflowSignalsTableReferences
-                        ._workflowExecutionIdTable(db),
-                    referencedColumn: $$WorkflowSignalsTableReferences
-                        ._workflowExecutionIdTable(db)
-                        .workflowExecutionId,
-                  ) as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
+          prefetchHooksCallback: null,
         ));
 }
 
@@ -4136,9 +3375,13 @@ typedef $$WorkflowSignalsTableProcessedTableManager = ProcessedTableManager<
     $$WorkflowSignalsTableAnnotationComposer,
     $$WorkflowSignalsTableCreateCompanionBuilder,
     $$WorkflowSignalsTableUpdateCompanionBuilder,
-    (WorkflowSignal, $$WorkflowSignalsTableReferences),
+    (
+      WorkflowSignal,
+      BaseReferences<_$DurableWorkflowDatabase, $WorkflowSignalsTable,
+          WorkflowSignal>
+    ),
     WorkflowSignal,
-    PrefetchHooks Function({bool workflowExecutionId})>;
+    PrefetchHooks Function()>;
 
 class $DurableWorkflowDatabaseManager {
   final _$DurableWorkflowDatabase _db;
