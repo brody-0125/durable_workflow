@@ -64,7 +64,6 @@ class MockWorkflowContext implements WorkflowContext {
     Future<T> Function() action, {
     Future<void> Function(T result)? compensate,
     RetryPolicy retry = RetryPolicy.none,
-    String? idempotencyKey,
     String Function(T value)? serialize,
     T Function(String data)? deserialize,
   }) =>
@@ -189,13 +188,12 @@ void main() {
 
     setUp(() => ctx = MockWorkflowContext());
 
-    test('step has compensate, retry, idempotencyKey params', () async {
+    test('step has compensate and retry params', () async {
       final result = await ctx.step(
         'test_step',
         () async => 42,
         compensate: (_) async {},
         retry: RetryPolicy.exponential(maxAttempts: 3),
-        idempotencyKey: 'key-123',
       );
       expect(result, 42);
     });

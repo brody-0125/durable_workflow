@@ -97,20 +97,6 @@ void main() {
         expect(execution.errorMessage, contains('boom'));
       });
 
-      test('records idempotencyKey in checkpoint', () async {
-        final executor =
-            await createTestExecutor(store, executionId: 'exec-006');
-
-        await executor.executeStep<String>(
-          'pay',
-          () async => 'tx-123',
-          idempotencyKey: 'pay-order-456',
-        );
-
-        final checkpoints = await store.loadCheckpoints('exec-006');
-        expect(checkpoints[0].idempotencyKey, 'pay-order-456');
-      });
-
       test('handles null return value', () async {
         final executor =
             await createTestExecutor(store, executionId: 'exec-009');

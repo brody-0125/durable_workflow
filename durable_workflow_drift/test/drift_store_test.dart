@@ -347,7 +347,6 @@ void main() {
         outputData: null,
         errorMessage: 'Payment gateway timeout',
         attempt: 3,
-        idempotencyKey: 'pay-order-123',
         compensateRef: 'refund_payment',
         startedAt: '2026-03-25T10:00:00.000',
         completedAt: '2026-03-25T10:00:05.000',
@@ -357,7 +356,6 @@ void main() {
       final loaded = await store.loadCheckpoints('exec-1');
       expect(loaded[0].errorMessage, equals('Payment gateway timeout'));
       expect(loaded[0].attempt, equals(3));
-      expect(loaded[0].idempotencyKey, equals('pay-order-123'));
       expect(loaded[0].compensateRef, equals('refund_payment'));
     });
 
@@ -638,7 +636,6 @@ void main() {
         stepIndex: 1,
         stepName: 'pay',
         status: StepStatus.intent,
-        idempotencyKey: 'pay-O-123',
         compensateRef: 'refund_payment',
         startedAt: '2026-03-25T10:00:03.000',
       ));
@@ -668,7 +665,6 @@ void main() {
       expect(checkpoints[0].stepName, equals('validate'));
       expect(checkpoints[0].status, equals(StepStatus.completed));
       expect(checkpoints[1].stepName, equals('pay'));
-      expect(checkpoints[1].idempotencyKey, equals('pay-O-123'));
 
       final timers = await store.loadPendingTimers();
       expect(timers, hasLength(1));
@@ -710,7 +706,6 @@ void main() {
       expect(loaded[0].inputData, isNull);
       expect(loaded[0].outputData, isNull);
       expect(loaded[0].errorMessage, isNull);
-      expect(loaded[0].idempotencyKey, isNull);
       expect(loaded[0].compensateRef, isNull);
       expect(loaded[0].startedAt, isNull);
       expect(loaded[0].completedAt, isNull);

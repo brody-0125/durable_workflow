@@ -41,14 +41,12 @@ class WorkflowContextImpl implements WorkflowContext {
     Future<T> Function() action, {
     Future<void> Function(T result)? compensate,
     RetryPolicy retry = RetryPolicy.none,
-    String? idempotencyKey,
     String Function(T value)? serialize,
     T Function(String data)? deserialize,
   }) {
     return _executor.executeStep<T>(
       name,
       action,
-      idempotencyKey: idempotencyKey,
       serialize: serialize,
       deserialize: deserialize,
       retryPolicy: retry,

@@ -120,7 +120,6 @@ class StepExecutor {
   Future<T> executeStep<T>(
     String name,
     Future<T> Function() action, {
-    String? idempotencyKey,
     String Function(T value)? serialize,
     T Function(String data)? deserialize,
     RetryPolicy retryPolicy = RetryPolicy.none,
@@ -180,7 +179,6 @@ class StepExecutor {
       stepIndex: currentIndex,
       stepName: name,
       status: StepStatus.intent,
-      idempotencyKey: idempotencyKey,
       compensateRef: compensate != null ? name : null,
       startedAt: now,
     );

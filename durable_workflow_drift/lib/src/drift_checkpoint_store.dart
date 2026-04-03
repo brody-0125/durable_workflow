@@ -71,7 +71,6 @@ class DriftCheckpointStore implements CheckpointStore {
       outputData: row.readNullable<String>('output_data'),
       errorMessage: row.readNullable<String>('error_message'),
       attempt: row.read<int>('attempt'),
-      idempotencyKey: row.readNullable<String>('idempotency_key'),
       compensateRef: row.readNullable<String>('compensate_ref'),
       startedAt: row.readNullable<String>('started_at'),
       completedAt: row.readNullable<String>('completed_at'),
@@ -196,7 +195,7 @@ class DriftCheckpointStore implements CheckpointStore {
         Variable(checkpoint.outputData),
         Variable(checkpoint.errorMessage),
         Variable.withInt(checkpoint.attempt),
-        Variable(checkpoint.idempotencyKey),
+        Variable(null), // idempotencyKey column preserved for schema compatibility
         Variable(checkpoint.compensateRef),
         Variable(checkpoint.startedAt),
         Variable(checkpoint.completedAt),

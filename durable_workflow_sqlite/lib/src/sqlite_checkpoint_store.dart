@@ -43,7 +43,7 @@ List<Object?> _checkpointParams(StepCheckpoint checkpoint) => [
       checkpoint.outputData,
       checkpoint.errorMessage,
       checkpoint.attempt,
-      checkpoint.idempotencyKey,
+      null, // idempotencyKey column preserved for schema compatibility
       checkpoint.compensateRef,
       checkpoint.startedAt,
       checkpoint.completedAt,

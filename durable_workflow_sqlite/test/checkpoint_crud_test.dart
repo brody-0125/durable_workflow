@@ -99,7 +99,6 @@ void main() {
         inputData: '{"amount":100}',
         errorMessage: 'Payment gateway timeout',
         attempt: 3,
-        idempotencyKey: 'pay-order-123',
         compensateRef: 'refund_payment',
         startedAt: kCreatedAt,
         completedAt: kLaterAt,
@@ -111,10 +110,6 @@ void main() {
         equals('Payment gateway timeout'),
       );
       expect(loaded[0].attempt, equals(3));
-      expect(
-        loaded[0].idempotencyKey,
-        equals('pay-order-123'),
-      );
       expect(
         loaded[0].compensateRef,
         equals('refund_payment'),

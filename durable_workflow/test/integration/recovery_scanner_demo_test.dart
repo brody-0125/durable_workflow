@@ -606,7 +606,6 @@ void main() {
               compensate: (result) async {
                 compensateLog.add('refund($result)');
               },
-              idempotencyKey: 'pay-ORD-001',
             );
 
             await ctx.step<String>(

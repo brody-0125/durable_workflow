@@ -46,7 +46,6 @@ StepCheckpoint checkpointFromRow(Row row) {
     outputData: row['output_data'] as String?,
     errorMessage: row['error_message'] as String?,
     attempt: row['attempt'] as int,
-    idempotencyKey: row['idempotency_key'] as String?,
     compensateRef: row['compensate_ref'] as String?,
     startedAt: row['started_at'] as String?,
     completedAt: row['completed_at'] as String?,

@@ -537,7 +537,7 @@ void main() {
       outputData: '{"valid": true}',
       errorMessage: null,
       attempt: 1,
-      idempotencyKey: 'validate-order-123',
+
       compensateRef: 'validate_compensate',
       startedAt: '2026-03-25T10:00:00.000',
       completedAt: '2026-03-25T10:00:01.000',
@@ -553,7 +553,6 @@ void main() {
       expect(checkpoint.outputData, '{"valid": true}');
       expect(checkpoint.errorMessage, isNull);
       expect(checkpoint.attempt, 1);
-      expect(checkpoint.idempotencyKey, 'validate-order-123');
       expect(checkpoint.compensateRef, 'validate_compensate');
       expect(checkpoint.startedAt, '2026-03-25T10:00:00.000');
       expect(checkpoint.completedAt, '2026-03-25T10:00:01.000');
@@ -568,7 +567,6 @@ void main() {
       );
       expect(cp.id, isNull);
       expect(cp.attempt, 1);
-      expect(cp.idempotencyKey, isNull);
       expect(cp.compensateRef, isNull);
       expect(cp.startedAt, isNull);
       expect(cp.completedAt, isNull);
@@ -621,7 +619,7 @@ void main() {
         inputData: '{"input": true}',
         outputData: '{"valid": true}',
         attempt: 1,
-        idempotencyKey: 'validate-order-123',
+  
         compensateRef: 'validate_compensate',
         startedAt: '2026-03-25T10:00:00.000',
         completedAt: '2026-03-25T10:00:01.000',
@@ -639,7 +637,7 @@ void main() {
         inputData: '{"input": true}',
         outputData: '{"valid": true}',
         attempt: 1,
-        idempotencyKey: 'validate-order-123',
+  
         compensateRef: 'validate_compensate',
         startedAt: '2026-03-25T10:00:00.000',
         completedAt: '2026-03-25T10:00:01.000',

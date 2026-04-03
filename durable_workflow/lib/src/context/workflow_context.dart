@@ -18,7 +18,6 @@ abstract class WorkflowContext {
   ///   Receives the step result as a parameter, enabling direct access
   ///   to the result without mutable variable workarounds.
   /// - [retry]: Retry policy for this step. Defaults to no retry.
-  /// - [idempotencyKey]: Optional key for deduplication of side effects.
   /// - [serialize]: Custom serializer to convert the step result to a string
   ///   for checkpoint persistence. If omitted, `jsonEncode(result)` is used.
   /// - [deserialize]: Custom deserializer to reconstruct the step result from
@@ -31,7 +30,6 @@ abstract class WorkflowContext {
     Future<T> Function() action, {
     Future<void> Function(T result)? compensate,
     RetryPolicy retry,
-    String? idempotencyKey,
     String Function(T value)? serialize,
     T Function(String data)? deserialize,
   });

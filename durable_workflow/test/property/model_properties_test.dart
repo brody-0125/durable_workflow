@@ -62,7 +62,6 @@ void main() {
           stepName: 'step-rt',
           status: status,
           attempt: 2,
-          idempotencyKey: 'key-1',
           compensateRef: 'comp-1',
         );
         final restored = StepCheckpoint.fromJson(cp.toJson());
