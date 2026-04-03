@@ -307,6 +307,7 @@ class DurableEngineImpl implements DurableEngine {
   }
 
   /// Closes all observer streams. Call when the engine is disposed.
+  @override
   void dispose() {
     _timerManager.dispose();
     _signalManager.dispose();

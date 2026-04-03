@@ -45,4 +45,9 @@ abstract class DurableEngine {
     String signalName, [
     Object? payload,
   ]);
+
+  /// Releases all resources held by this engine.
+  ///
+  /// After calling dispose, the engine should not be used.
+  void dispose();
 }

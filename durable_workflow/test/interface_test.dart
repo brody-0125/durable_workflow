@@ -106,6 +106,9 @@ class MockDurableEngine implements DurableEngine {
     String signalName, [
     Object? payload,
   ]) async {}
+
+  @override
+  void dispose() {}
 }
 
 void main() {
@@ -266,6 +269,11 @@ void main() {
     test('sendSignal accepts id, name, and optional payload', () async {
       await engine.sendSignal('exec-001', 'delivery_confirmed', true);
       await engine.sendSignal('exec-001', 'simple_signal');
+    });
+
+    test('dispose can be called on DurableEngine type', () {
+      final DurableEngine abstractRef = engine;
+      abstractRef.dispose();
     });
   });
 }
