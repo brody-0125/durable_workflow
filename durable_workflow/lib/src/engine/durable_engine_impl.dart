@@ -35,6 +35,8 @@ class DurableEngineImpl implements DurableEngine {
 
   int _idCounter = 0;
 
+  bool _disposed = false;
+
   /// Timer manager for durable sleep operations.
   final TimerManager _timerManager;
 
@@ -90,6 +92,7 @@ class DurableEngineImpl implements DurableEngine {
     Duration? ttl,
     WorkflowGuarantee guarantee = WorkflowGuarantee.foregroundOnly,
   }) async {
+    _checkNotDisposed();
     validateIdentifier(workflowType, 'workflowType');
     final executionId = _generateId();
     final now = utcNow();
@@ -150,6 +153,13 @@ class DurableEngineImpl implements DurableEngine {
     WorkflowExecution execution,
     Future<T> Function(WorkflowContext ctx) body,
   ) async {
+    // Prevent duplicate concurrent execution of the same executionId
+    if (_executors.containsKey(executionId)) {
+      throw StateError(
+        'Execution $executionId is already running in this engine',
+      );
+    }
+
     final executor = StepExecutor(
       store: _store,
       workflowExecutionId: executionId,
@@ -311,14 +321,35 @@ class DurableEngineImpl implements DurableEngine {
     }
   }
 
-  /// Closes all observer streams. Call when the engine is disposed.
+  /// Releases all resources held by this engine.
+  ///
+  /// Cancels all active executors, disposes timer and signal managers,
+  /// and closes all observer streams. After calling dispose, the engine
+  /// should not be used — any subsequent calls will throw [StateError].
   @override
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+
+    // Cancel all active executors
+    for (final executor in _executors.values) {
+      executor.cancel();
+    }
+    _executors.clear();
+
     _timerManager.dispose();
     _signalManager.dispose();
     for (final controller in _observers.values) {
-      controller.close();
+      if (!controller.isClosed) {
+        controller.close();
+      }
     }
     _observers.clear();
+  }
+
+  void _checkNotDisposed() {
+    if (_disposed) {
+      throw StateError('Engine has been disposed');
+    }
   }
 }
