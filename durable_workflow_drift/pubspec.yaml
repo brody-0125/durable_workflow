@@ -25,3 +25,8 @@ dev_dependencies:
   lints: ^4.0.0
   test: ^1.31.0
 
+# TODO: Remove before publishing — needed for local development
+dependency_overrides:
+  durable_workflow:
+    path: ../durable_workflow
+

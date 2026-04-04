@@ -158,7 +158,7 @@ void main() {
       await engine.cancel('exec-0');
       await future;
 
-      expect(caughtError, isA<StateError>());
+      expect(caughtError, isA<WorkflowCancelledException>());
 
       final pendingTimers = await store.loadPendingTimers();
       final timerForExec = pendingTimers

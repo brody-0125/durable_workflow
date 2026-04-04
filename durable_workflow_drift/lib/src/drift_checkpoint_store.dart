@@ -421,9 +421,12 @@ class DriftCheckpointStore implements CheckpointStore {
 
   @override
   Future<void> saveCheckpoints(List<StepCheckpoint> checkpoints) async {
-    for (final checkpoint in checkpoints) {
-      await saveCheckpoint(checkpoint);
-    }
+    if (checkpoints.isEmpty) return;
+    await _db.transaction(() async {
+      for (final checkpoint in checkpoints) {
+        await saveCheckpoint(checkpoint);
+      }
+    });
   }
 
   @override

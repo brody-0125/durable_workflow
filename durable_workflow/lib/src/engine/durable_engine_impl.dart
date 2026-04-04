@@ -216,7 +216,7 @@ class DurableEngineImpl implements DurableEngine {
         _notifyObservers(executionId, current);
       }
       _cleanupObserver(executionId);
-      throw StateError('Workflow $executionId was cancelled');
+      rethrow;
     } catch (e) {
       final current = await _store.loadExecution(executionId);
       WorkflowExecution latest = execution;
@@ -254,6 +254,7 @@ class DurableEngineImpl implements DurableEngine {
 
   @override
   Future<void> cancel(String workflowExecutionId) async {
+    _checkNotDisposed();
     final executor = _executors[workflowExecutionId];
     if (executor != null) {
       executor.cancel();
@@ -277,6 +278,7 @@ class DurableEngineImpl implements DurableEngine {
 
   @override
   Stream<WorkflowExecution> observe(String workflowExecutionId) {
+    _checkNotDisposed();
     _observers.putIfAbsent(
       workflowExecutionId,
       () => StreamController<WorkflowExecution>.broadcast(),
@@ -307,6 +309,7 @@ class DurableEngineImpl implements DurableEngine {
     String signalName, [
     Object? payload,
   ]) async {
+    _checkNotDisposed();
     validateIdentifier(workflowExecutionId, 'workflowExecutionId');
     validateIdentifier(signalName, 'signalName');
     final signal = WorkflowSignal(
@@ -369,9 +372,7 @@ class DurableEngineImpl implements DurableEngine {
     _observers.clear();
   }
 
-  /// Formats an error for persistence, stripping stack traces and
-  /// applying the custom [_errorFormatter] if provided.
-  /// Safely invokes a callback on all registered observers.
+  /// Safely invokes a callback on all registered engine observers.
   void _notifyEngineObservers(void Function(DurableEngineObserver obs) callback) {
     for (final obs in _engineObservers) {
       try {
@@ -382,6 +383,8 @@ class DurableEngineImpl implements DurableEngine {
     }
   }
 
+  /// Formats an error for persistence, applying the custom
+  /// [_errorFormatter] if provided, or truncating to 1000 chars.
   String _formatError(Object error) {
     if (_errorFormatter != null) {
       return _errorFormatter(error);
