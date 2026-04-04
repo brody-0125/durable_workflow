@@ -1,8 +1,8 @@
 # durable_workflow
 
-[![Dart](https://img.shields.io/badge/Dart-%5E3.4-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Dart](https://img.shields.io/badge/Dart-%5E3.6-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests: 324](https://img.shields.io/badge/Tests-324%20passed-brightgreen)](#test-results)
+[![Tests: 356](https://img.shields.io/badge/Tests-356%20passed-brightgreen)](#test-results)
 
 **[Korean README (한국어)](README.ko.md)**
 
@@ -43,10 +43,10 @@ Add the packages to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  durable_workflow: ^0.1.0
-  durable_workflow_sqlite: ^0.1.0   # for SQLite persistence
+  durable_workflow: ^0.2.0
+  durable_workflow_sqlite: ^0.2.1   # for SQLite persistence
   # or
-  durable_workflow_drift: ^0.1.0    # for Drift ORM persistence
+  durable_workflow_drift: ^0.2.0    # for Drift ORM persistence
 ```
 
 > **System requirement:** `libsqlite3-dev` must be installed for SQLite FFI bindings.
@@ -191,14 +191,14 @@ The [`durable_workflow_examples`](durable_workflow_examples/) package includes r
 ## Test Results
 
 ```
-durable_workflow:          234 tests ✅  (unit + integration)
-durable_workflow_sqlite:    59 tests ✅
+durable_workflow:          258 tests ✅  (unit + integration)
+durable_workflow_sqlite:    67 tests ✅
 durable_workflow_drift:     31 tests ✅
 ──────────────────────────────────────
-Total:                     324 tests ✅
+Total:                     356 tests ✅
 ```
 
-CI runs on **Ubuntu latest** with Dart **stable** and **beta** SDKs. Minimum coverage threshold: **70%**.
+CI runs on **Ubuntu latest** with Dart **stable** and **beta** SDKs. Minimum coverage threshold: **80%**.
 
 ---
 
@@ -212,11 +212,11 @@ durable_workflow/
 │   │   ├── context/               WorkflowContext interface + implementation
 │   │   ├── engine/                Execution engine (7 components)
 │   │   └── persistence/           CheckpointStore interface + InMemory impl
-│   ├── test/                      234 tests (unit + integration)
+│   ├── test/                      258 tests (unit + integration)
 │   └── example/                   Runnable examples
 ├── durable_workflow_sqlite/       SQLite persistence implementation
 │   ├── lib/src/                   SqliteCheckpointStore + schema + migrations
-│   └── test/                      59 tests
+│   └── test/                      67 tests
 ├── durable_workflow_drift/        Drift ORM persistence implementation
 │   ├── lib/src/                   DriftCheckpointStore + tables + reactive queries
 │   └── test/                      31 tests
