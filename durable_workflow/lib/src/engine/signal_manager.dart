@@ -98,19 +98,25 @@ class SignalManager {
     // Set up timeout if specified
     if (timeout != null) {
       _timeoutTimers[key] = Timer(timeout, () async {
-        if (!completer.isCompleted) {
-          // Mark signal as EXPIRED
-          final signals = await _store.loadPendingSignals(
-            workflowExecutionId,
-            signalName: signalName,
-          );
-          for (final s in signals) {
-            await _store.saveSignal(
-              s.copyWith(status: SignalStatus.expired),
-            );
-          }
-          _completers.remove(key);
+        // Guard: if deliverSignal() already completed this completer,
+        // or if it was removed from the map, skip timeout handling.
+        if (completer.isCompleted || !_completers.containsKey(key)) {
           _timeoutTimers.remove(key);
+          return;
+        }
+        // Mark signal as EXPIRED
+        final signals = await _store.loadPendingSignals(
+          workflowExecutionId,
+          signalName: signalName,
+        );
+        for (final s in signals) {
+          await _store.saveSignal(
+            s.copyWith(status: SignalStatus.expired),
+          );
+        }
+        _completers.remove(key);
+        _timeoutTimers.remove(key);
+        if (!completer.isCompleted) {
           completer.completeError(
             WorkflowTimeoutException(
               workflowExecutionId: workflowExecutionId,
