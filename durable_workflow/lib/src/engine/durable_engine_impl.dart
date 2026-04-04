@@ -47,6 +47,14 @@ class DurableEngineImpl implements DurableEngine {
   /// Passed through to each [StepExecutor] instance.
   final StepNameMismatchWarning? _onStepNameMismatch;
 
+  /// Optional formatter for error messages before persistence.
+  ///
+  /// If provided, error messages are passed through this function before
+  /// being stored in checkpoints. Use this to strip stack traces,
+  /// redact sensitive information, or truncate long messages.
+  /// If not provided, `error.toString()` is used with a 1000-char limit.
+  final String Function(Object error)? _errorFormatter;
+
   /// Creates a [DurableEngineImpl].
   ///
   /// [store] is the checkpoint store for persistence.
@@ -60,9 +68,11 @@ class DurableEngineImpl implements DurableEngine {
     String Function()? generateId,
     Duration timerPollInterval = const Duration(seconds: 1),
     StepNameMismatchWarning? onStepNameMismatch,
+    String Function(Object error)? errorFormatter,
   })  : _store = store,
         _generateId = generateId ?? _defaultGenerateId,
         _onStepNameMismatch = onStepNameMismatch,
+        _errorFormatter = errorFormatter,
         _timerManager = TimerManager(
           store: store,
           pollInterval: timerPollInterval,
@@ -201,7 +211,7 @@ class DurableEngineImpl implements DurableEngine {
       if (current != null && current.status is! Failed) {
         latest = current.copyWith(
           status: const Failed(),
-          errorMessage: e.toString(),
+          errorMessage: _formatError(e),
           updatedAt: utcNow(),
         );
         await _store.saveExecution(latest);
@@ -345,6 +355,16 @@ class DurableEngineImpl implements DurableEngine {
       }
     }
     _observers.clear();
+  }
+
+  /// Formats an error for persistence, stripping stack traces and
+  /// applying the custom [_errorFormatter] if provided.
+  String _formatError(Object error) {
+    if (_errorFormatter != null) {
+      return _errorFormatter(error);
+    }
+    final message = error.toString();
+    return message.length > 1000 ? message.substring(0, 1000) : message;
   }
 
   void _checkNotDisposed() {

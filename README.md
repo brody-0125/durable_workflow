@@ -232,13 +232,10 @@ durable_workflow/
 
 | Document | Description |
 |----------|-------------|
-| [Blueprint](docs/BLUEPRINT.md) | Design decisions, research sources, rationale |
-| [Architecture](docs/ARCHITECTURE.md) | Package structure, component diagram, data flow |
-| [Flutter Design](docs/FLUTTER_DESIGN.md) | Flutter adapter design patterns |
-| [Naming Review](docs/NAMING_REVIEW.md) | Package naming analysis and alternatives |
 | [Core Package](durable_workflow/README.md) | API reference and getting started |
 | [SQLite Package](durable_workflow_sqlite/README.md) | SQLite persistence setup |
 | [Drift Package](durable_workflow_drift/README.md) | Drift ORM persistence setup |
+| [Flutter Package](durable_workflow_flutter/README.md) | Flutter lifecycle adapters and widgets |
 | [Examples](durable_workflow_examples/README.md) | Real-world use-case catalog |
 
 ---
