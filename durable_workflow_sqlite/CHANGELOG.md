@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Widen `meta` constraint from `^1.18.2` to `^1.18.0` for Flutter SDK compatibility.
+
 ## 0.2.0
 
 - Implement new `CheckpointStore` methods: `saveCheckpoints()`, `deleteOldTimers()`, `deleteOldSignals()`.
