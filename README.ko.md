@@ -1,8 +1,8 @@
 # durable_workflow
 
-[![Dart](https://img.shields.io/badge/Dart-%5E3.4-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Dart](https://img.shields.io/badge/Dart-%5E3.6-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests: 324](https://img.shields.io/badge/Tests-324%20passed-brightgreen)](#테스트-결과)
+[![Tests: 356](https://img.shields.io/badge/Tests-356%20passed-brightgreen)](#테스트-결과)
 
 **[English README](README.md)**
 
@@ -43,10 +43,10 @@
 
 ```yaml
 dependencies:
-  durable_workflow: ^0.1.0
-  durable_workflow_sqlite: ^0.1.0   # SQLite 영속성
+  durable_workflow: ^0.2.0
+  durable_workflow_sqlite: ^0.2.1   # SQLite 영속성
   # 또는
-  durable_workflow_drift: ^0.1.0    # Drift ORM 영속성
+  durable_workflow_drift: ^0.2.0    # Drift ORM 영속성
 ```
 
 > **시스템 요구사항:** SQLite FFI 바인딩을 위해 `libsqlite3-dev`가 필요합니다.
@@ -191,14 +191,14 @@ store.close();
 ## 테스트 결과
 
 ```
-durable_workflow:          234개 테스트 ✅  (단위 + 통합)
-durable_workflow_sqlite:    59개 테스트 ✅
+durable_workflow:          258개 테스트 ✅  (단위 + 통합)
+durable_workflow_sqlite:    67개 테스트 ✅
 durable_workflow_drift:     31개 테스트 ✅
 ──────────────────────────────────────
-합계:                      324개 테스트 ✅
+합계:                      356개 테스트 ✅
 ```
 
-CI는 **Ubuntu latest**에서 Dart **stable** 및 **beta** SDK로 실행됩니다. 최소 커버리지 기준: **70%**.
+CI는 **Ubuntu latest**에서 Dart **stable** 및 **beta** SDK로 실행됩니다. 최소 커버리지 기준: **80%**.
 
 ---
 
@@ -212,11 +212,11 @@ durable_workflow/
 │   │   ├── context/               WorkflowContext 인터페이스 + 구현
 │   │   ├── engine/                실행 엔진 (7개 컴포넌트)
 │   │   └── persistence/           CheckpointStore 인터페이스 + InMemory 구현
-│   ├── test/                      234개 테스트 (단위 + 통합)
+│   ├── test/                      258개 테스트 (단위 + 통합)
 │   └── example/                   실행 가능한 예제
 ├── durable_workflow_sqlite/       SQLite 영속성 구현
 │   ├── lib/src/                   SqliteCheckpointStore + 스키마 + 마이그레이션
-│   └── test/                      59개 테스트
+│   └── test/                      67개 테스트
 ├── durable_workflow_drift/        Drift ORM 영속성 구현
 │   ├── lib/src/                   DriftCheckpointStore + 테이블 + 리액티브 쿼리
 │   └── test/                      31개 테스트
