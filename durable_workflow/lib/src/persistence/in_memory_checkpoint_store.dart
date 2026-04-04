@@ -146,4 +146,36 @@ class InMemoryCheckpointStore implements CheckpointStore {
     }
     return toDelete.length;
   }
+
+  @override
+  Future<void> saveCheckpoints(List<StepCheckpoint> checkpoints) async {
+    for (final cp in checkpoints) {
+      await saveCheckpoint(cp);
+    }
+  }
+
+  @override
+  Future<int> deleteOldTimers(DateTime cutoff) async {
+    final before = _timers.length;
+    _timers.removeWhere((t) {
+      if (t.status != TimerStatus.fired && t.status != TimerStatus.cancelled) {
+        return false;
+      }
+      return DateTime.parse(t.createdAt).isBefore(cutoff);
+    });
+    return before - _timers.length;
+  }
+
+  @override
+  Future<int> deleteOldSignals(DateTime cutoff) async {
+    final before = _signals.length;
+    _signals.removeWhere((s) {
+      if (s.status != SignalStatus.delivered &&
+          s.status != SignalStatus.expired) {
+        return false;
+      }
+      return DateTime.parse(s.createdAt).isBefore(cutoff);
+    });
+    return before - _signals.length;
+  }
 }

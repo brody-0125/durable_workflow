@@ -20,6 +20,7 @@ export 'src/engine/durable_engine.dart';
 export 'src/persistence/checkpoint_store.dart';
 
 // Public implementations
+export 'src/engine/engine_observer.dart';
 export 'src/engine/durable_engine_impl.dart';
 export 'src/engine/recovery_scanner.dart';
 export 'src/engine/types.dart';

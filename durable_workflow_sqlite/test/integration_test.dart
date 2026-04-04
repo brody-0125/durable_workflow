@@ -59,7 +59,6 @@ void main() {
         executionId: 'exec-order-1',
         stepIndex: 1,
         stepName: 'pay',
-        idempotencyKey: 'pay-O-123',
         compensateRef: 'refund_payment',
         startedAt: kLaterAt,
       ));
@@ -98,11 +97,6 @@ void main() {
         checkpoints[1].status,
         equals(StepStatus.intent),
       );
-      expect(
-        checkpoints[1].idempotencyKey,
-        equals('pay-O-123'),
-      );
-
       final timers = await store.loadPendingTimers();
       expect(timers, hasLength(1));
 

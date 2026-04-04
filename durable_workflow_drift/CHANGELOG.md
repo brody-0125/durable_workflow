@@ -1,3 +1,8 @@
+## 0.2.0
+
+- Implement new `CheckpointStore` methods: `saveCheckpoints()`, `deleteOldTimers()`, `deleteOldSignals()`.
+- Requires `durable_workflow: ^0.2.0`.
+
 ## 0.1.1
 
 - Tighten dependency constraints (drift ^2.31.0, sqlite3 ^2.9.4) for downgrade compatibility.

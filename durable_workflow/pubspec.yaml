@@ -2,7 +2,7 @@ name: durable_workflow
 description: >-
   Local durable execution library for Dart.
   Provides durable checkpoint/resume workflows with zero dependencies.
-version: 0.1.0
+version: 0.2.0
 repository: https://github.com/brody-0125/durable_workflow/tree/main/durable_workflow
 issue_tracker: https://github.com/brody-0125/durable_workflow/issues
 topics:
@@ -13,7 +13,9 @@ topics:
   - retry
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
+
+resolution: workspace
 
 dependencies:
   test: ^1.25.0

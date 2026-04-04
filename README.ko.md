@@ -232,13 +232,10 @@ durable_workflow/
 
 | 문서 | 설명 |
 |------|------|
-| [설계 청사진](docs/BLUEPRINT.md) | 설계 결정, 리서치 소스, 근거 |
-| [아키텍처](docs/ARCHITECTURE.md) | 패키지 구조, 컴포넌트 다이어그램, 데이터 흐름 |
-| [Flutter 설계](docs/FLUTTER_DESIGN.md) | Flutter 어댑터 설계 패턴 |
-| [네이밍 검토](docs/NAMING_REVIEW.md) | 패키지명 분석 및 대안 |
 | [코어 패키지](durable_workflow/README.md) | API 레퍼런스 및 시작 가이드 |
 | [SQLite 패키지](durable_workflow_sqlite/README.md) | SQLite 영속성 설정 |
 | [Drift 패키지](durable_workflow_drift/README.md) | Drift ORM 영속성 설정 |
+| [Flutter 패키지](durable_workflow_flutter/README.md) | Flutter 라이프사이클 어댑터 및 위젯 |
 | [예제](durable_workflow_examples/README.md) | 실제 유즈케이스 카탈로그 |
 
 ---

@@ -23,5 +23,8 @@ CLAUDE.md
 교정_내역_리포트.md
 publish.sh
 
+# Flutter package local overrides (not in workspace)
+durable_workflow_flutter/pubspec_overrides.yaml
+
 # Gran Maestro
 .gran-maestro/

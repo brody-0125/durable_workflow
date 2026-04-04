@@ -1,3 +1,13 @@
+## 0.2.1
+
+- Widen `meta` constraint from `^1.18.2` to `^1.18.0` for Flutter SDK compatibility.
+
+## 0.2.0
+
+- Implement new `CheckpointStore` methods: `saveCheckpoints()`, `deleteOldTimers()`, `deleteOldSignals()`.
+- `saveCheckpoints()` now has `@override` annotation (was missing).
+- Requires `durable_workflow: ^0.2.0`.
+
 ## 0.1.2
 
 - Widen sqlite3 constraint to `>=2.9.4 <4.0.0` for sqlite3 3.x compatibility.

@@ -1,3 +1,8 @@
+## 0.2.0
+
+- Requires `durable_workflow: ^0.2.0` (dispose on interface, new exception types).
+- No functional changes in this package — version bump for dependency alignment.
+
 ## 0.1.0
 
 - Initial release.

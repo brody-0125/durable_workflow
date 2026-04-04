@@ -34,6 +34,10 @@ class RecoveryScanResult {
 class RecoveryScanner {
   final CheckpointStore _store;
   final DurableEngineImpl _engine;
+  bool _isScanning = false;
+
+  /// Whether a scan is currently in progress.
+  bool get isScanning => _isScanning;
 
   /// Creates a [RecoveryScanner].
   RecoveryScanner({
@@ -49,6 +53,26 @@ class RecoveryScanner {
   ///
   /// Returns a [RecoveryScanResult] summarizing what happened.
   Future<RecoveryScanResult> scan({
+    required Map<String, Future<dynamic> Function(WorkflowContext ctx)>
+        workflowRegistry,
+    void Function(String executionId, Object error)? onRecoveryError,
+  }) async {
+    if (_isScanning) {
+      // Prevent concurrent scans — return empty result instead of duplicating work
+      return const RecoveryScanResult(resumed: [], expired: []);
+    }
+    _isScanning = true;
+    try {
+      return await _doScan(
+        workflowRegistry: workflowRegistry,
+        onRecoveryError: onRecoveryError,
+      );
+    } finally {
+      _isScanning = false;
+    }
+  }
+
+  Future<RecoveryScanResult> _doScan({
     required Map<String, Future<dynamic> Function(WorkflowContext ctx)>
         workflowRegistry,
     void Function(String executionId, Object error)? onRecoveryError,

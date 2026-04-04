@@ -12,7 +12,10 @@ import 'durable_engine.dart';
 import 'saga_compensator.dart';
 import 'signal_manager.dart';
 import 'step_executor.dart';
+import 'engine_observer.dart';
 import 'timer_manager.dart';
+import 'types.dart';
+import '../util/validation.dart';
 
 /// Concrete implementation of [DurableEngine].
 ///
@@ -33,6 +36,8 @@ class DurableEngineImpl implements DurableEngine {
 
   int _idCounter = 0;
 
+  bool _disposed = false;
+
   /// Timer manager for durable sleep operations.
   final TimerManager _timerManager;
 
@@ -42,6 +47,17 @@ class DurableEngineImpl implements DurableEngine {
   /// Optional callback for step name mismatch warnings during replay.
   /// Passed through to each [StepExecutor] instance.
   final StepNameMismatchWarning? _onStepNameMismatch;
+
+  /// Optional formatter for error messages before persistence.
+  ///
+  /// If provided, error messages are passed through this function before
+  /// being stored in checkpoints. Use this to strip stack traces,
+  /// redact sensitive information, or truncate long messages.
+  /// If not provided, `error.toString()` is used with a 1000-char limit.
+  final String Function(Object error)? _errorFormatter;
+
+  /// Registered lifecycle observers.
+  final List<DurableEngineObserver> _engineObservers;
 
   /// Creates a [DurableEngineImpl].
   ///
@@ -56,9 +72,13 @@ class DurableEngineImpl implements DurableEngine {
     String Function()? generateId,
     Duration timerPollInterval = const Duration(seconds: 1),
     StepNameMismatchWarning? onStepNameMismatch,
+    String Function(Object error)? errorFormatter,
+    List<DurableEngineObserver>? observers,
   })  : _store = store,
         _generateId = generateId ?? _defaultGenerateId,
         _onStepNameMismatch = onStepNameMismatch,
+        _errorFormatter = errorFormatter,
+        _engineObservers = observers ?? const [],
         _timerManager = TimerManager(
           store: store,
           pollInterval: timerPollInterval,
@@ -88,6 +108,8 @@ class DurableEngineImpl implements DurableEngine {
     Duration? ttl,
     WorkflowGuarantee guarantee = WorkflowGuarantee.foregroundOnly,
   }) async {
+    _checkNotDisposed();
+    validateIdentifier(workflowType, 'workflowType');
     final executionId = _generateId();
     final now = utcNow();
 
@@ -111,6 +133,9 @@ class DurableEngineImpl implements DurableEngine {
 
     await _store.saveExecution(execution);
     _notifyObservers(executionId, execution);
+    _notifyEngineObservers(
+      (obs) => obs.onExecutionStart(executionId, workflowType),
+    );
 
     return _executeBody<T>(executionId, execution, body);
   }
@@ -125,7 +150,7 @@ class DurableEngineImpl implements DurableEngine {
   ) async {
     var execution = await _store.loadExecution(workflowExecutionId);
     if (execution == null) {
-      throw StateError('Execution $workflowExecutionId not found');
+      throw WorkflowExecutionNotFoundException(workflowExecutionId);
     }
 
     execution = execution.copyWith(
@@ -147,6 +172,13 @@ class DurableEngineImpl implements DurableEngine {
     WorkflowExecution execution,
     Future<T> Function(WorkflowContext ctx) body,
   ) async {
+    // Prevent duplicate concurrent execution of the same executionId
+    if (_executors.containsKey(executionId)) {
+      throw StateError(
+        'Execution $executionId is already running in this engine',
+      );
+    }
+
     final executor = StepExecutor(
       store: _store,
       workflowExecutionId: executionId,
@@ -171,6 +203,9 @@ class DurableEngineImpl implements DurableEngine {
       );
       await _store.saveExecution(completed);
       _notifyObservers(executionId, completed);
+      _notifyEngineObservers(
+        (obs) => obs.onExecutionComplete(executionId, const Completed()),
+      );
       _cleanupObserver(executionId);
 
       return result;
@@ -181,14 +216,14 @@ class DurableEngineImpl implements DurableEngine {
         _notifyObservers(executionId, current);
       }
       _cleanupObserver(executionId);
-      throw StateError('Workflow $executionId was cancelled');
+      rethrow;
     } catch (e) {
       final current = await _store.loadExecution(executionId);
       WorkflowExecution latest = execution;
       if (current != null && current.status is! Failed) {
         latest = current.copyWith(
           status: const Failed(),
-          errorMessage: e.toString(),
+          errorMessage: _formatError(e),
           updatedAt: utcNow(),
         );
         await _store.saveExecution(latest);
@@ -219,6 +254,7 @@ class DurableEngineImpl implements DurableEngine {
 
   @override
   Future<void> cancel(String workflowExecutionId) async {
+    _checkNotDisposed();
     final executor = _executors[workflowExecutionId];
     if (executor != null) {
       executor.cancel();
@@ -229,7 +265,7 @@ class DurableEngineImpl implements DurableEngine {
 
     final execution = await _store.loadExecution(workflowExecutionId);
     if (execution == null) {
-      throw StateError('Execution $workflowExecutionId not found');
+      throw WorkflowExecutionNotFoundException(workflowExecutionId);
     }
 
     final updated = execution.copyWith(
@@ -242,6 +278,7 @@ class DurableEngineImpl implements DurableEngine {
 
   @override
   Stream<WorkflowExecution> observe(String workflowExecutionId) {
+    _checkNotDisposed();
     _observers.putIfAbsent(
       workflowExecutionId,
       () => StreamController<WorkflowExecution>.broadcast(),
@@ -272,6 +309,9 @@ class DurableEngineImpl implements DurableEngine {
     String signalName, [
     Object? payload,
   ]) async {
+    _checkNotDisposed();
+    validateIdentifier(workflowExecutionId, 'workflowExecutionId');
+    validateIdentifier(signalName, 'signalName');
     final signal = WorkflowSignal(
       workflowExecutionId: workflowExecutionId,
       signalName: signalName,
@@ -306,13 +346,56 @@ class DurableEngineImpl implements DurableEngine {
     }
   }
 
-  /// Closes all observer streams. Call when the engine is disposed.
+  /// Releases all resources held by this engine.
+  ///
+  /// Cancels all active executors, disposes timer and signal managers,
+  /// and closes all observer streams. After calling dispose, the engine
+  /// should not be used — any subsequent calls will throw [StateError].
+  @override
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+
+    // Cancel all active executors
+    for (final executor in _executors.values) {
+      executor.cancel();
+    }
+    _executors.clear();
+
     _timerManager.dispose();
     _signalManager.dispose();
     for (final controller in _observers.values) {
-      controller.close();
+      if (!controller.isClosed) {
+        controller.close();
+      }
     }
     _observers.clear();
+  }
+
+  /// Safely invokes a callback on all registered engine observers.
+  void _notifyEngineObservers(void Function(DurableEngineObserver obs) callback) {
+    for (final obs in _engineObservers) {
+      try {
+        callback(obs);
+      } catch (_) {
+        // Observer errors must not affect engine execution
+      }
+    }
+  }
+
+  /// Formats an error for persistence, applying the custom
+  /// [_errorFormatter] if provided, or truncating to 1000 chars.
+  String _formatError(Object error) {
+    if (_errorFormatter != null) {
+      return _errorFormatter(error);
+    }
+    final message = error.toString();
+    return message.length > 1000 ? message.substring(0, 1000) : message;
+  }
+
+  void _checkNotDisposed() {
+    if (_disposed) {
+      throw StateError('Engine has been disposed');
+    }
   }
 }

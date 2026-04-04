@@ -49,7 +49,7 @@ void main() {
       expect(finalExec!.status, isA<Completed>());
     });
 
-    test('waitSignal with timeout throws TimeoutException',
+    test('waitSignal with timeout throws WorkflowTimeoutException',
         () async {
       await expectLater(
         engine.run<String>(
@@ -62,7 +62,7 @@ void main() {
             return data ?? 'none';
           },
         ),
-        throwsA(isA<TimeoutException>()),
+        throwsA(isA<WorkflowTimeoutException>()),
       );
     });
 
@@ -145,7 +145,7 @@ void main() {
       await engine.cancel('exec-0');
       await future;
 
-      expect(caughtError, isA<StateError>());
+      expect(caughtError, isA<WorkflowCancelledException>());
 
       final signals = await store.loadPendingSignals(
         'exec-0',

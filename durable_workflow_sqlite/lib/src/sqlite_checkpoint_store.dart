@@ -43,7 +43,7 @@ List<Object?> _checkpointParams(StepCheckpoint checkpoint) => [
       checkpoint.outputData,
       checkpoint.errorMessage,
       checkpoint.attempt,
-      checkpoint.idempotencyKey,
+      null, // idempotencyKey column preserved for schema compatibility
       checkpoint.compensateRef,
       checkpoint.startedAt,
       checkpoint.completedAt,
@@ -287,6 +287,7 @@ class SqliteCheckpointStore implements CheckpointStore {
   /// More efficient than calling [saveCheckpoint] repeatedly,
   /// as it reuses a single prepared statement and wraps all
   /// inserts in one transaction.
+  @override
   Future<void> saveCheckpoints(List<StepCheckpoint> checkpoints) async {
     if (checkpoints.isEmpty) return;
 
@@ -421,5 +422,31 @@ class SqliteCheckpointStore implements CheckpointStore {
       await deleteExecution(id);
     }
     return ids.length;
+  }
+
+  @override
+  Future<int> deleteOldTimers(DateTime cutoff) async {
+    final cutoffStr = cutoff.toUtc().toIso8601String();
+    return runInTransaction(_db, () {
+      _db.execute(
+        'DELETE FROM workflow_timers '
+        'WHERE status IN (?, ?) AND created_at < ?',
+        ['FIRED', 'CANCELLED', cutoffStr],
+      );
+      return _db.updatedRows;
+    });
+  }
+
+  @override
+  Future<int> deleteOldSignals(DateTime cutoff) async {
+    final cutoffStr = cutoff.toUtc().toIso8601String();
+    return runInTransaction(_db, () {
+      _db.execute(
+        'DELETE FROM workflow_signals '
+        'WHERE status IN (?, ?) AND created_at < ?',
+        ['DELIVERED', 'EXPIRED', cutoffStr],
+      );
+      return _db.updatedRows;
+    });
   }
 }

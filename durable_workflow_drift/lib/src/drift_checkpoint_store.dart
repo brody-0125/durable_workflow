@@ -71,7 +71,6 @@ class DriftCheckpointStore implements CheckpointStore {
       outputData: row.readNullable<String>('output_data'),
       errorMessage: row.readNullable<String>('error_message'),
       attempt: row.read<int>('attempt'),
-      idempotencyKey: row.readNullable<String>('idempotency_key'),
       compensateRef: row.readNullable<String>('compensate_ref'),
       startedAt: row.readNullable<String>('started_at'),
       completedAt: row.readNullable<String>('completed_at'),
@@ -196,7 +195,7 @@ class DriftCheckpointStore implements CheckpointStore {
         Variable(checkpoint.outputData),
         Variable(checkpoint.errorMessage),
         Variable.withInt(checkpoint.attempt),
-        Variable(checkpoint.idempotencyKey),
+        const Variable<String>(null), // idempotencyKey column preserved for schema compatibility
         Variable(checkpoint.compensateRef),
         Variable(checkpoint.startedAt),
         Variable(checkpoint.completedAt),
@@ -417,6 +416,46 @@ class DriftCheckpointStore implements CheckpointStore {
       'ORDER BY created_at ASC',
       variables: variables,
       readsFrom: {_db.workflowExecutions},
+    );
+  }
+
+  @override
+  Future<void> saveCheckpoints(List<StepCheckpoint> checkpoints) async {
+    if (checkpoints.isEmpty) return;
+    await _db.transaction(() async {
+      for (final checkpoint in checkpoints) {
+        await saveCheckpoint(checkpoint);
+      }
+    });
+  }
+
+  @override
+  Future<int> deleteOldTimers(DateTime cutoff) async {
+    final cutoffStr = cutoff.toUtc().toIso8601String();
+    return await _db.customUpdate(
+      'DELETE FROM workflow_timers '
+      'WHERE status IN (?, ?) AND created_at < ?',
+      variables: [
+        Variable.withString('FIRED'),
+        Variable.withString('CANCELLED'),
+        Variable.withString(cutoffStr),
+      ],
+      updates: {_db.workflowTimers},
+    );
+  }
+
+  @override
+  Future<int> deleteOldSignals(DateTime cutoff) async {
+    final cutoffStr = cutoff.toUtc().toIso8601String();
+    return await _db.customUpdate(
+      'DELETE FROM workflow_signals '
+      'WHERE status IN (?, ?) AND created_at < ?',
+      variables: [
+        Variable.withString('DELIVERED'),
+        Variable.withString('EXPIRED'),
+        Variable.withString(cutoffStr),
+      ],
+      updates: {_db.workflowSignals},
     );
   }
 }

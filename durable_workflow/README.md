@@ -172,6 +172,29 @@ Integration tests:         22
 Total:                    234
 ```
 
+## Security Considerations
+
+Checkpoint data (step inputs, outputs, error messages) is stored as plaintext
+in the underlying database. Keep the following in mind for production use:
+
+- **Do not store secrets** (API keys, passwords, tokens) as step results.
+  Use references or IDs instead.
+- **Use custom serializers** to encrypt sensitive fields before persistence:
+  ```dart
+  await ctx.step('process_payment',
+    () async => processPayment(cardNumber),
+    serialize: (result) => encrypt(jsonEncode(result)),
+    deserialize: (data) => PaymentResult.fromJson(jsonDecode(decrypt(data))),
+  );
+  ```
+- **Place database files** in the app's private data directory
+  (e.g., `getApplicationDocumentsDirectory()` on Flutter).
+- **Use the `errorFormatter` parameter** on `DurableEngineImpl` to strip
+  stack traces and redact sensitive data from persisted error messages.
+- For full database encryption, consider using
+  [sqlcipher_flutter_libs](https://pub.dev/packages/sqlcipher_flutter_libs)
+  with the SQLite backend.
+
 ## License
 
 See the repository root for license information.

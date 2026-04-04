@@ -51,6 +51,15 @@ class MockCheckpointStore implements CheckpointStore {
 
   @override
   Future<int> deleteCompletedBefore(DateTime cutoff) async => 0;
+
+  @override
+  Future<void> saveCheckpoints(List<StepCheckpoint> checkpoints) async {}
+
+  @override
+  Future<int> deleteOldTimers(DateTime cutoff) async => 0;
+
+  @override
+  Future<int> deleteOldSignals(DateTime cutoff) async => 0;
 }
 
 /// Mock implementation of [WorkflowContext] to verify the interface compiles.
@@ -64,7 +73,6 @@ class MockWorkflowContext implements WorkflowContext {
     Future<T> Function() action, {
     Future<void> Function(T result)? compensate,
     RetryPolicy retry = RetryPolicy.none,
-    String? idempotencyKey,
     String Function(T value)? serialize,
     T Function(String data)? deserialize,
   }) =>
@@ -106,6 +114,9 @@ class MockDurableEngine implements DurableEngine {
     String signalName, [
     Object? payload,
   ]) async {}
+
+  @override
+  void dispose() {}
 }
 
 void main() {
@@ -186,13 +197,12 @@ void main() {
 
     setUp(() => ctx = MockWorkflowContext());
 
-    test('step has compensate, retry, idempotencyKey params', () async {
+    test('step has compensate and retry params', () async {
       final result = await ctx.step(
         'test_step',
         () async => 42,
         compensate: (_) async {},
         retry: RetryPolicy.exponential(maxAttempts: 3),
-        idempotencyKey: 'key-123',
       );
       expect(result, 42);
     });
@@ -266,6 +276,11 @@ void main() {
     test('sendSignal accepts id, name, and optional payload', () async {
       await engine.sendSignal('exec-001', 'delivery_confirmed', true);
       await engine.sendSignal('exec-001', 'simple_signal');
+    });
+
+    test('dispose can be called on DurableEngine type', () {
+      final DurableEngine abstractRef = engine;
+      abstractRef.dispose();
     });
   });
 }

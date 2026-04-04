@@ -54,7 +54,6 @@ StepCheckpoint createTestCheckpoint({
   String? outputData,
   String? errorMessage,
   int attempt = 1,
-  String? idempotencyKey,
   String? compensateRef,
 }) {
   return StepCheckpoint(
@@ -67,7 +66,6 @@ StepCheckpoint createTestCheckpoint({
     outputData: outputData,
     errorMessage: errorMessage,
     attempt: attempt,
-    idempotencyKey: idempotencyKey,
     compensateRef: compensateRef,
   );
 }

@@ -66,4 +66,19 @@ abstract class CheckpointStore {
   /// Returns the number of executions deleted.
   /// Use this for periodic maintenance to prevent unbounded database growth.
   Future<int> deleteCompletedBefore(DateTime cutoff);
+
+  /// Persists multiple checkpoints in a single batch operation.
+  ///
+  /// Implementations should use transactions for atomicity where possible.
+  Future<void> saveCheckpoints(List<StepCheckpoint> checkpoints);
+
+  /// Deletes timers in terminal states (FIRED, CANCELLED) older than [cutoff].
+  ///
+  /// Returns the number of timers deleted.
+  Future<int> deleteOldTimers(DateTime cutoff);
+
+  /// Deletes signals in terminal states (DELIVERED, EXPIRED) older than [cutoff].
+  ///
+  /// Returns the number of signals deleted.
+  Future<int> deleteOldSignals(DateTime cutoff);
 }

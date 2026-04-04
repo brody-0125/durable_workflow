@@ -64,9 +64,6 @@ class StepCheckpoint {
   /// The attempt number (1-based).
   final int attempt;
 
-  /// Idempotency key for deduplication of side effects, or `null`.
-  final String? idempotencyKey;
-
   /// Reference to the compensation function, or `null`.
   final String? compensateRef;
 
@@ -87,7 +84,6 @@ class StepCheckpoint {
     this.outputData,
     this.errorMessage,
     this.attempt = 1,
-    this.idempotencyKey,
     this.compensateRef,
     this.startedAt,
     this.completedAt,
@@ -105,7 +101,6 @@ class StepCheckpoint {
       outputData: json['outputData'] as String?,
       errorMessage: json['errorMessage'] as String?,
       attempt: json['attempt'] as int? ?? 1,
-      idempotencyKey: json['idempotencyKey'] as String?,
       compensateRef: json['compensateRef'] as String?,
       startedAt: json['startedAt'] as String?,
       completedAt: json['completedAt'] as String?,
@@ -123,7 +118,6 @@ class StepCheckpoint {
         'outputData': outputData,
         'errorMessage': errorMessage,
         'attempt': attempt,
-        'idempotencyKey': idempotencyKey,
         'compensateRef': compensateRef,
         'startedAt': startedAt,
         'completedAt': completedAt,
@@ -140,7 +134,6 @@ class StepCheckpoint {
     String? outputData,
     String? errorMessage,
     int? attempt,
-    String? idempotencyKey,
     String? compensateRef,
     String? startedAt,
     String? completedAt,
@@ -156,7 +149,6 @@ class StepCheckpoint {
       outputData: outputData ?? this.outputData,
       errorMessage: errorMessage ?? this.errorMessage,
       attempt: attempt ?? this.attempt,
-      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
       compensateRef: compensateRef ?? this.compensateRef,
       startedAt: startedAt ?? this.startedAt,
       completedAt: completedAt ?? this.completedAt,
@@ -176,7 +168,6 @@ class StepCheckpoint {
           outputData == other.outputData &&
           errorMessage == other.errorMessage &&
           attempt == other.attempt &&
-          idempotencyKey == other.idempotencyKey &&
           compensateRef == other.compensateRef &&
           startedAt == other.startedAt &&
           completedAt == other.completedAt;
@@ -192,7 +183,6 @@ class StepCheckpoint {
         outputData,
         errorMessage,
         attempt,
-        idempotencyKey,
         compensateRef,
         startedAt,
         completedAt,
