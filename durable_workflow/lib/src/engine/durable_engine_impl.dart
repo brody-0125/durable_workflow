@@ -12,6 +12,7 @@ import 'durable_engine.dart';
 import 'saga_compensator.dart';
 import 'signal_manager.dart';
 import 'step_executor.dart';
+import 'engine_observer.dart';
 import 'timer_manager.dart';
 import 'types.dart';
 import '../util/validation.dart';
@@ -55,6 +56,9 @@ class DurableEngineImpl implements DurableEngine {
   /// If not provided, `error.toString()` is used with a 1000-char limit.
   final String Function(Object error)? _errorFormatter;
 
+  /// Registered lifecycle observers.
+  final List<DurableEngineObserver> _engineObservers;
+
   /// Creates a [DurableEngineImpl].
   ///
   /// [store] is the checkpoint store for persistence.
@@ -69,10 +73,12 @@ class DurableEngineImpl implements DurableEngine {
     Duration timerPollInterval = const Duration(seconds: 1),
     StepNameMismatchWarning? onStepNameMismatch,
     String Function(Object error)? errorFormatter,
+    List<DurableEngineObserver>? observers,
   })  : _store = store,
         _generateId = generateId ?? _defaultGenerateId,
         _onStepNameMismatch = onStepNameMismatch,
         _errorFormatter = errorFormatter,
+        _engineObservers = observers ?? const [],
         _timerManager = TimerManager(
           store: store,
           pollInterval: timerPollInterval,
@@ -127,6 +133,9 @@ class DurableEngineImpl implements DurableEngine {
 
     await _store.saveExecution(execution);
     _notifyObservers(executionId, execution);
+    _notifyEngineObservers(
+      (obs) => obs.onExecutionStart(executionId, workflowType),
+    );
 
     return _executeBody<T>(executionId, execution, body);
   }
@@ -194,6 +203,9 @@ class DurableEngineImpl implements DurableEngine {
       );
       await _store.saveExecution(completed);
       _notifyObservers(executionId, completed);
+      _notifyEngineObservers(
+        (obs) => obs.onExecutionComplete(executionId, const Completed()),
+      );
       _cleanupObserver(executionId);
 
       return result;
@@ -359,6 +371,17 @@ class DurableEngineImpl implements DurableEngine {
 
   /// Formats an error for persistence, stripping stack traces and
   /// applying the custom [_errorFormatter] if provided.
+  /// Safely invokes a callback on all registered observers.
+  void _notifyEngineObservers(void Function(DurableEngineObserver obs) callback) {
+    for (final obs in _engineObservers) {
+      try {
+        callback(obs);
+      } catch (_) {
+        // Observer errors must not affect engine execution
+      }
+    }
+  }
+
   String _formatError(Object error) {
     if (_errorFormatter != null) {
       return _errorFormatter(error);
