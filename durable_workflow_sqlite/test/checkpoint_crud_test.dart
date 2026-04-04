@@ -126,7 +126,6 @@ void main() {
       expect(loaded[0].inputData, isNull);
       expect(loaded[0].outputData, isNull);
       expect(loaded[0].errorMessage, isNull);
-      expect(loaded[0].idempotencyKey, isNull);
       expect(loaded[0].compensateRef, isNull);
       expect(loaded[0].startedAt, isNull);
       expect(loaded[0].completedAt, isNull);

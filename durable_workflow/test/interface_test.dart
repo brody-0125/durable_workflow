@@ -51,6 +51,15 @@ class MockCheckpointStore implements CheckpointStore {
 
   @override
   Future<int> deleteCompletedBefore(DateTime cutoff) async => 0;
+
+  @override
+  Future<void> saveCheckpoints(List<StepCheckpoint> checkpoints) async {}
+
+  @override
+  Future<int> deleteOldTimers(DateTime cutoff) async => 0;
+
+  @override
+  Future<int> deleteOldSignals(DateTime cutoff) async => 0;
 }
 
 /// Mock implementation of [WorkflowContext] to verify the interface compiles.
