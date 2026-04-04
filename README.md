@@ -194,8 +194,9 @@ The [`durable_workflow_examples`](durable_workflow_examples/) package includes r
 durable_workflow:          258 tests ✅  (unit + integration)
 durable_workflow_sqlite:    67 tests ✅
 durable_workflow_drift:     31 tests ✅
+durable_workflow_flutter:   39 tests ✅
 ──────────────────────────────────────
-Total:                     356 tests ✅
+Total:                     395 tests ✅
 ```
 
 CI runs on **Ubuntu latest** with Dart **stable** and **beta** SDKs. Minimum coverage threshold: **80%**.
@@ -220,7 +221,9 @@ durable_workflow/
 ├── durable_workflow_drift/        Drift ORM persistence implementation
 │   ├── lib/src/                   DriftCheckpointStore + tables + reactive queries
 │   └── test/                      31 tests
-├── durable_workflow_flutter/      Flutter platform adapters (Phase 2)
+├── durable_workflow_flutter/      Flutter platform adapters
+│   ├── lib/src/                   Lifecycle adapters, providers, and widgets
+│   └── test/                      39 tests
 ├── durable_workflow_examples/     Real-world use-case catalog
 │   └── lib/src/                   7 categories of workflow examples
 └── docs/                          Design documents
