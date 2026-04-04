@@ -1,0 +1,13 @@
+name: _durable_workflow_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - durable_workflow
+  - durable_workflow_sqlite
+  - durable_workflow_drift
+  - durable_workflow_examples
+  # durable_workflow_flutter is excluded — requires Flutter SDK.
+  # Use `flutter pub get` in that directory separately.

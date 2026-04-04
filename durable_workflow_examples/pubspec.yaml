@@ -8,8 +8,9 @@ repository: https://github.com/brody-0125/durable_workflow/tree/main/durable_wor
 issue_tracker: https://github.com/brody-0125/durable_workflow/issues
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
+
+resolution: workspace
 
 dependencies:
-  durable_workflow:
-    path: ../durable_workflow
+  durable_workflow: ^0.2.0
