@@ -23,5 +23,8 @@ CLAUDE.md
 교정_내역_리포트.md
 publish.sh
 
+# Local dependency overrides (per-developer, not committed)
+pubspec_overrides.yaml
+
 # Gran Maestro
 .gran-maestro/
