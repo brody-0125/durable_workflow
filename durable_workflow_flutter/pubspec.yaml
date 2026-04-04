@@ -25,4 +25,3 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   flutter_test:
     sdk: flutter
-  durable_workflow_sqlite: ^0.2.0
